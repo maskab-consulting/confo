@@ -1,8 +1,12 @@
-import unittest
+import math
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)
+def test_sqrt():
+    num = 25
+    assert math.sqrt(num) == 5
 
-if __name__ == '__main__':
-    unittest.main()
+def testsquare():
+    num = 7
+    assert pow(7,2)== 49
+
+def testequality():
+    assert 11 == 11
