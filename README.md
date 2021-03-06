@@ -6,10 +6,9 @@
 <p align="center"><h3 style="color: #193967; text-align: center">Distributed configuration manager for python</h3></p>
 
 <p align="center">
-<a href="https://travis-ci.org/github/n3rdydad/confo"><img src="https://img.shields.io/travis/kn3rdydad/confo" alt="Build Status"></a>
+<a href="https://www.travis-ci.com/github/n3rdydad/confo"><img src="https://www.travis-ci.com/n3rdydad/confo.png"></a>
 
 [comment]: <> (<a href="https://badge.fury.io/py/numpy"><img src="https://badge.fury.io/py/numpy.svg" alt="PyPI version" height="18"></a>)
-
 [comment]: <> (<a href="#"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>)
 </p>
 
