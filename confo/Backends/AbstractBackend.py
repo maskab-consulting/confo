@@ -9,26 +9,25 @@
 
 # Import modules
 from abc import ABC, abstractmethod
-from singleton_decorator import singleton
 
-@singleton
+
 class AbstractBackend(ABC):
     @abstractmethod
-    def load_credentials(self,credentials):
+    def load_credentials(self, credentials):
         pass
 
     @abstractmethod
-    def set_system(self,system_name):
+    def set_system(self, system_name):
         pass
+
     @abstractmethod
     def get_all(self):
         pass
 
     @abstractmethod
-    def get(self,name,field=None):
+    def get(self, name, field=None):
         pass
 
     @abstractmethod
     def set(self, config, field, value):
         pass
-
