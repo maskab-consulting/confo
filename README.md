@@ -6,7 +6,7 @@
 <p align="center"><h3 style="color: #193967; text-align: center">Distributed configuration manager for python</h3></p>
 
 <p align="center">
-<a href="https://www.travis-ci.com/github/n3rdydad/confo"><img src="https://www.travis-ci.com/n3rdydad/confo.png"></a>
+<a href="https://github.com/sambe-consulting/confo/actions/workflows/pytest-workflow.yml"><img src="https://github.com/sambe-consulting/confo/actions/workflows/pytest-workflow.yml/badge.svg"></a>
 
 [comment]: <> (<a href="https://badge.fury.io/py/numpy"><img src="https://badge.fury.io/py/numpy.svg" alt="PyPI version" height="18"></a>)
 [comment]: <> (<a href="#"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>)
