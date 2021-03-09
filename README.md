@@ -7,9 +7,8 @@
 
 <p align="center">
 <a href="https://github.com/sambe-consulting/confo/actions/workflows/pytest-workflow.yml"><img src="https://github.com/sambe-consulting/confo/actions/workflows/pytest-workflow.yml/badge.svg"></a>
+<a href="https://houndci.com"><img src="https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg"></a>
 
-[comment]: <> (<a href="https://badge.fury.io/py/numpy"><img src="https://badge.fury.io/py/numpy.svg" alt="PyPI version" height="18"></a>)
-[comment]: <> (<a href="#"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>)
 </p>
 
 ## About the Confo
