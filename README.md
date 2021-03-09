@@ -1,7 +1,7 @@
 
 
 
-<p align="center"><img src="https://raw.githubusercontent.com/n3rdydad/confo/master/assets/logo.png" width="400"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/sambe-consulting/confo/master/assets/logo.png" width="400"></p>
 
 <p align="center"><h3 style="color: #193967; text-align: center">Distributed configuration manager for python</h3></p>
 
