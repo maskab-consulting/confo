@@ -25,6 +25,10 @@ class AbstractBackend(ABC):
         pass
 
     @abstractmethod
+    def create_namespace(self,namespace):
+        pass
+
+    @abstractmethod
     def get_all(self):
         pass
 
@@ -36,6 +40,3 @@ class AbstractBackend(ABC):
     def set(self, config, field, value):
         pass
 
-    @abstractmethod
-    def set_namespace(self,namespace):
-        pass

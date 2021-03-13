@@ -53,10 +53,9 @@ class FileBackend(AbstractBackend):
         self.config_path = credentials["config_path"]
         self.namespaces = os.listdir(self.config_path)
         for namespace in self.namespaces:
-            self.configurations[namespace] = []
+            self.configurations[namespace] = {}
             for conf_file in os.listdir(self.config_path+"/"+namespace):
-                 self.configurations[namespace].append({"name":get_conf_name(conf_file),\
-                      "values":get_conf_values(namespace,conf_file)})
+                 self.configurations[namespace][get_conf_name(conf_file)] = get_conf_values(namespace,conf_file)
 
     def use_namespace(self, namespace_name):
         self.namespace_name = namespace_name
@@ -66,7 +65,7 @@ class FileBackend(AbstractBackend):
         namespaces = {"all_namespaces": self.namespaces, "current_namespace": self.namespace_name}
         return namespaces
 
-    def set_namespace(self, namespace):
+    def create_namespace(self, namespace):
         try:
             os.mkdir(self.config_path + "/" + namespace)
         except FileExistsError:
@@ -81,21 +80,27 @@ class FileBackend(AbstractBackend):
     def get(self, name, field=None):
         if field != None:
             try:
-                return self.configurations[name][field]
+                return self.configurations[self.namespace_name][name][field]
             except:
                 print("configuration %s or field %s are not set" % (name, field))
         else:
             try:
-                return self.configurations[name]
+                return self.configurations[self.namespace_name][name]
             except:
                 print("configuration %s is not set" % (name))
 
     def set(self, config, field, value):
-        try:
-            self.configurations[config][field] = value
-        except:
-            self.configurations[config] = {}
-            self.configurations[config][field] = value
+        if type(field) == str:
+            try:
+                self.configurations[self.namespace_name][config][field] = value
+            except:
+                self.configurations[self.namespace_name][config] = {}
+                self.configurations[self.namespace_name][config][field] = value
+        elif type(field) == dict and value == None:
+            try:
+                self.configurations[self.namespace_name][config] = field
+            except:
+                pass
 
     def reload(self):
         self.configurations = {}
@@ -103,5 +108,5 @@ class FileBackend(AbstractBackend):
         self.load_credentials(credentials=self.credentials)
 
     def get_count(self):
-        return len(self.configurations)
+        return len(self.get_all())
 
