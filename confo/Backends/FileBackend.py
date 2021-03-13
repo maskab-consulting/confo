@@ -13,64 +13,82 @@
 from .AbstractBackend import AbstractBackend
 import os
 import json
+from json.decoder import JSONDecodeError
 from singleton_decorator import singleton
+
+
+class FileNotFoundException(Exception):
+    pass
 
 
 @singleton
 class FileBackend(AbstractBackend):
     configuration_files = []
     configurations = {}
-    system_name = 'all'
-    systems = []
+    namespace_name = '*'
+    namespaces = []
     credentials = None
-
-    def parse_credentials(self, credentials):
-        if "config_path" in credentials:
-            self.systems = os.listdir(credentials["config_path"])
-            if self.system_name == 'all':
-                for system in self.systems:
-                    for file in os.listdir(credentials["config_path"] + "/" + system):
-                        self.configuration_files.append(system + "/" + file)
-            else:
-                if os.path.exists(credentials["config_path"] + "/" + self.system_name):
-                    for file in os.listdir(credentials["config_path"] + "/" + self.system_name):
-                        self.configuration_files.append(self.system_name + "/" + file)
-                else:
-                    print("System "+str(self.system_name)+" is not found in configuration directory")
-
-        else:
-            print('Dictionary must contain key "config_path"')
+    config_path = None
 
     def load_credentials(self, credentials):
-        self.parse_credentials(credentials=credentials)
-        self.credentials = credentials
-        config_path = credentials["config_path"]
-        for conf in self.configuration_files:
-            cfg = open(config_path + conf, 'r')
+        def get_conf_name(file):
+            if "." in file:
+                return file.split('.')[0]
+            else:
+                return file
+            
+        def get_conf_values(namespace,file):
+            data = None
             try:
-                name = conf.split('/')[1].split('.')[0]
-                self.configurations[name] = json.loads(cfg.read())
-                # print(self.configurations)
-            except:
-                print("Configuration File %s does not have the proper format" , str(conf))
+                with open(self.config_path+"/"+namespace+"/"+file,"r") as f:
+                      data = json.loads(f.read())
+            except FileNotFoundError:
+                print("Configuration file: "+file+" does not exist in namespace: "+namespace)
+            except JSONDecodeError:
+                print("Configuration file: "+file+" in namespace: "+namespace+" has unknown format")
 
-    def set_system(self, system_name):
-        self.system_name = system_name
+            return data
+            
+        self.credentials = credentials
+        self.config_path = credentials["config_path"]
+        self.namespaces = os.listdir(self.config_path)
+        for namespace in self.namespaces:
+            self.configurations[namespace] = []
+            for conf_file in os.listdir(self.config_path+"/"+namespace):
+                 self.configurations[namespace].append({"name":get_conf_name(conf_file),\
+                      "values":get_conf_values(namespace,conf_file)})
+
+    def use_namespace(self, namespace_name):
+        self.namespace_name = namespace_name
+        self.reload()
+
+    def get_namespaces(self):
+        namespaces = {"all_namespaces": self.namespaces, "current_namespace": self.namespace_name}
+        return namespaces
+
+    def set_namespace(self, namespace):
+        try:
+            os.mkdir(self.config_path + "/" + namespace)
+        except FileExistsError:
+            print("namespace " + namespace + " already exists")
 
     def get_all(self):
-        return self.configurations
+        if self.namespace_name in self.namespaces:
+            return self.configurations[self.namespace_name]
+        else:
+            raise Exception("Please select namespace")
 
     def get(self, name, field=None):
         if field != None:
             try:
                 return self.configurations[name][field]
             except:
-                print("configuration %s or field %s are not set" %(name, field))
+                print("configuration %s or field %s are not set" % (name, field))
         else:
             try:
                 return self.configurations[name]
             except:
-                print("configuration %s is not set" %(name))
+                print("configuration %s is not set" % (name))
 
     def set(self, config, field, value):
         try:
@@ -86,3 +104,4 @@ class FileBackend(AbstractBackend):
 
     def get_count(self):
         return len(self.configurations)
+

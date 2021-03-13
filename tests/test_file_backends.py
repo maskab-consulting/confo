@@ -12,7 +12,7 @@ from confo.Backends.FileBackend import FileBackend
 
 def get_mock():
     main_path = os.path.dirname(os.path.realpath(__file__))
-    mock = main_path+"/configurtions/"
+    mock = main_path+"/configurations/"
     return mock
 def get_obj():
     mock = get_mock()
@@ -44,7 +44,7 @@ def setup_function(function):
 
 def teardown_function(function):
     mock = get_mock()
-    shutil.rmtree(mock)
+    # shutil.rmtree(mock)
 
 
 def test_count():

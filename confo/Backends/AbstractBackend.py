@@ -17,7 +17,11 @@ class AbstractBackend(ABC):
         pass
 
     @abstractmethod
-    def set_system(self, system_name):
+    def use_namespace(self, system_name):
+        pass
+
+    @abstractmethod
+    def get_namespaces(self):
         pass
 
     @abstractmethod
@@ -30,4 +34,8 @@ class AbstractBackend(ABC):
 
     @abstractmethod
     def set(self, config, field, value):
+        pass
+
+    @abstractmethod
+    def set_namespace(self,namespace):
         pass
