@@ -44,7 +44,7 @@ def setup_function(function):
 
 def teardown_function(function):
     mock = get_mock()
-    # shutil.rmtree(mock)
+    shutil.rmtree(mock)
 
 
 def test_count():
