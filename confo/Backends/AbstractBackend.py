@@ -40,3 +40,7 @@ class AbstractBackend(ABC):
     def set(self, config, field, value):
         pass
 
+    @abstractmethod
+    def persist(self,namespace,config):
+        pass
+

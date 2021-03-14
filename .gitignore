@@ -131,3 +131,4 @@ dmypy.json
 .idea
 
 tests/configurations/
+tests/configurations2/
