@@ -12,35 +12,67 @@ from abc import ABC, abstractmethod
 
 
 class AbstractBackend(ABC):
+    configurations = {}
+    namespace_name = None
+    namespaces = []
+
     @abstractmethod
     def load_credentials(self, credentials):
         pass
 
-    @abstractmethod
     def use_namespace(self, system_name):
-        pass
+        if system_name in self.get_namespaces()["all_namespaces"]:
+            self.namespace_name = system_name
+            self.reload()
+        else:
+            print("Namespace: " + system_name + " does not exist")
 
-    @abstractmethod
     def get_namespaces(self):
-        pass
+        namespaces = {"all_namespaces": self.namespaces, "current_namespace": self.namespace_name}
+        return namespaces
 
     @abstractmethod
-    def create_namespace(self,namespace):
+    def create_namespace(self, namespace):
         pass
 
-    @abstractmethod
     def get_all(self):
-        pass
+        if self.namespace_name in self.namespaces:
+            return self.configurations[self.namespace_name]
+        else:
+            raise Exception("Please select namespace")
 
-    @abstractmethod
     def get(self, name, field=None):
-        pass
+        if field != None:
+            try:
+                return self.configurations[self.namespace_name][name][field]
+            except:
+                print("configuration %s or field %s are not set" % (name, field))
+        else:
+            try:
+                return self.configurations[self.namespace_name][name]
+            except:
+                print("configuration %s is not set" % (name))
 
-    @abstractmethod
     def set(self, config, field, value):
-        pass
+        if type(field) == str:
+            try:
+                self.configurations[self.namespace_name][config][field] = value
+            except:
+                self.configurations[self.namespace_name][config] = {}
+                self.configurations[self.namespace_name][config][field] = value
+        elif type(field) == dict and value == None:
+            try:
+                self.configurations[self.namespace_name][config] = field
+            except:
+                pass
 
     @abstractmethod
-    def persist(self,namespace,config):
+    def persist(self, namespace, config):
         pass
 
+    def get_count(self):
+        return len(self.get_all())
+
+    @abstractmethod
+    def reload(self):
+        pass

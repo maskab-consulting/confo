@@ -52,7 +52,7 @@ def test_count():
     fb.use_namespace("systemA")
     assert fb.get_count() == 2
     fb.use_namespace("systemB")
-    assert fb.get_count() == 1
+    assert fb.get_count() == 1, "Get count failure"
 
 def test_get():
     fb = get_obj()
