@@ -61,14 +61,17 @@ class ZookeeperBackend(AbstractBackend):
             self.persist_configuration(namespace, config)
 
     def reload(self):
-        self.configurations = {}
         self.configurations[self.namespace_name] = {}
         configs = self.zk_client.get_children(self.main_namespace + "/" + self.namespace_name)
         for config in configs:
             path = self.main_namespace + "/" + self.namespace_name + "/" + config
             data, stat = self.zk_client.get(path)
-            self.configurations[self.namespace_name][config] = json.loads(data)
-
+            if data.decode('utf-8').strip() == '':
+                data = "{}"
+            try:
+                self.configurations[self.namespace_name][config] = json.loads(data)
+            except ValueError as e:
+                self.configurations[self.namespace_name][config] = json.loads("{}")
     def parse_credentials(self, credentials):
         if "zookeeper_user" in credentials.keys():
             self.zookeeper_user = credentials["zookeeper_user"]
@@ -88,15 +91,23 @@ class ZookeeperBackend(AbstractBackend):
             self.persist_namespace(namespace)
 
     def persist_namespace(self, namespace):
+        recover_namespace = self.namespace_name
+        if namespace not in self.configurations.keys():
+            raise Exception("Namespace "+namespace+" not loaded. Load namespace with obj.use_namespace("+namespace+")")
+        self.recover_config = self.configurations[namespace]
         if self.zk_client.exists(self.main_namespace + "/" + namespace):
             pass
         else:
             self.zk_client.ensure_path(self.main_namespace + "/" + namespace)
-        for configuration in self.configurations[namespace]:
+
+        self.use_namespace(namespace)
+        for configuration in self.recover_config:
+
             self.persist_configuration(namespace, configuration)
+        self.use_namespace(recover_namespace)
 
     def persist_configuration(self, namespace, configuration):
         path = self.main_namespace + "/" + namespace + "/" + configuration
         self.zk_client.ensure_path(path)
-        data = self.configurations[namespace][configuration]
-        self.zk_client.set(path,json.dumps(data))
+        data = self.recover_config[configuration]
+        self.zk_client.set(path,str.encode(json.dumps(data)))

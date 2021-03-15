@@ -66,7 +66,7 @@ class FileBackend(AbstractBackend):
         self.namespaces = os.listdir(self.config_path)
 
     def reload(self):
-        self.configurations = {}
+        # self.configurations = {}
         self.configuration_files = []
         self.load_credentials(credentials=self.credentials)
 

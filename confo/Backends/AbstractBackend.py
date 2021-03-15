@@ -60,9 +60,12 @@ class AbstractBackend(ABC):
             except:
                 self.configurations[self.namespace_name][config] = {}
                 self.configurations[self.namespace_name][config][field] = value
-        elif type(field) == dict and value == None:
+        elif (type(field) == dict or type(field) == list) and value == None:
             try:
                 self.configurations[self.namespace_name][config] = field
+                # print(self.configurations[self.namespace_name][config])
+                # print("*"*80)
+                # print(self.configurations)
             except:
                 pass
 
