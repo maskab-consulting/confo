@@ -19,15 +19,16 @@ from ..Exceptions import *
 
 
 class ZookeeperBackend(AbstractBackend):
-    configurations = {}
-    zookeeper_host = None
-    zookeeper_port = None
-    zookeeper_user = None
-    zookeeper_passwd = None
-    zk_client = None
-    namespace_name = '*'
-    main_namespace = "/confo/"
-    namespaces = None
+    def __init__(self):
+        self.configurations = {}
+        self.zookeeper_host = None
+        self.zookeeper_port = None
+        self.zookeeper_user = None
+        self.zookeeper_passwd = None
+        self.zk_client = None
+        self.namespace_name = '*'
+        self.main_namespace = "/confo/"
+        self.namespaces = None
 
     def load_credentials(self, credentials):
         self.parse_credentials(credentials)
