@@ -14,21 +14,18 @@ from .AbstractBackend import AbstractBackend
 import os
 import json
 from json.decoder import JSONDecodeError
-from singleton_decorator import singleton
 
+from ..Exceptions import *
 
-class FileNotFoundException(Exception):
-    pass
-
-
-@singleton
 class FileBackend(AbstractBackend):
-    configuration_files = []
-    configurations = {}
-    namespace_name = '*'
-    namespaces = []
-    credentials = None
-    config_path = None
+
+    def __init__(self):
+        self.configuration_files = []
+        self.configurations = {}
+        self.namespace_name = '*'
+        self.namespaces = []
+        self.credentials = None
+        self.config_path = None
 
     def load_credentials(self, credentials):
         def get_conf_name(file):
@@ -53,7 +50,8 @@ class FileBackend(AbstractBackend):
         self.config_path = credentials["config_path"]
         self.namespaces = os.listdir(self.config_path)
         for namespace in self.namespaces:
-            self.configurations[namespace] = {}
+            if namespace not in list(self.configurations.keys()):
+                self.configurations[namespace] = {}
             for conf_file in os.listdir(self.config_path + "/" + namespace):
                 self.configurations[namespace][get_conf_name(conf_file)] = get_conf_values(namespace, conf_file)
 
@@ -69,7 +67,6 @@ class FileBackend(AbstractBackend):
         # self.configurations = {}
         self.configuration_files = []
         self.load_credentials(credentials=self.credentials)
-
 
     def persist(self, namespace=False, config=False):
         if namespace == False:

@@ -14,15 +14,10 @@ from .AbstractBackend import AbstractBackend
 import os
 import json
 from json.decoder import JSONDecodeError
-from singleton_decorator import singleton
 from kazoo.client import KazooClient
+from ..Exceptions import *
 
 
-class FileNotFoundException(Exception):
-    pass
-
-
-@singleton
 class ZookeeperBackend(AbstractBackend):
     configurations = {}
     zookeeper_host = None
@@ -72,6 +67,7 @@ class ZookeeperBackend(AbstractBackend):
                 self.configurations[self.namespace_name][config] = json.loads(data)
             except ValueError as e:
                 self.configurations[self.namespace_name][config] = json.loads("{}")
+
     def parse_credentials(self, credentials):
         if "zookeeper_user" in credentials.keys():
             self.zookeeper_user = credentials["zookeeper_user"]
@@ -80,11 +76,11 @@ class ZookeeperBackend(AbstractBackend):
         if "zookeeper_host" in credentials.keys():
             self.zookeeper_host = credentials["zookeeper_host"]
         else:
-            raise Exception("Please set 'zookeeper_host' in credentials")
+            raise ZookeeperHostNotFoundException("Please set 'zookeeper_host' in credentials")
         if "zookeeper_port" in credentials.keys():
             self.zookeeper_port = credentials["zookeeper_port"]
         else:
-            raise Exception("Please set 'zookeeper_port' in credentials")
+            raise ZookeeperPortNotFoundException("Please set 'zookeeper_port' in credentials")
 
     def persist_everything(self):
         for namespace in self.namespaces:
@@ -93,7 +89,8 @@ class ZookeeperBackend(AbstractBackend):
     def persist_namespace(self, namespace):
         recover_namespace = self.namespace_name
         if namespace not in self.configurations.keys():
-            raise Exception("Namespace "+namespace+" not loaded. Load namespace with obj.use_namespace("+namespace+")")
+            raise NamespaceNotLoadedException(
+                "Namespace " + namespace + " not loaded. Load namespace with obj.use_namespace(" + namespace + ")")
         self.recover_config = self.configurations[namespace]
         if self.zk_client.exists(self.main_namespace + "/" + namespace):
             pass
@@ -102,7 +99,6 @@ class ZookeeperBackend(AbstractBackend):
 
         self.use_namespace(namespace)
         for configuration in self.recover_config:
-
             self.persist_configuration(namespace, configuration)
         self.use_namespace(recover_namespace)
 
@@ -110,4 +106,4 @@ class ZookeeperBackend(AbstractBackend):
         path = self.main_namespace + "/" + namespace + "/" + configuration
         self.zk_client.ensure_path(path)
         data = self.recover_config[configuration]
-        self.zk_client.set(path,str.encode(json.dumps(data)))
+        self.zk_client.set(path, str.encode(json.dumps(data)))
