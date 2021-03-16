@@ -47,12 +47,9 @@ jobs:
            -p 2181:2181 \
            -p 2888:2888 \
            -p 3888:3888 \
-           bitnami/zookeeper:latest && pytest
+           bitnami/zookeeper:latest
 
-#      - name: Test with pytest
-#        run: |
-#          pytest
+      - name: Test with pytest
+        run: |
+          pytest
 
-#      - name: Run test cases
-#        run: |
-#          pytest
