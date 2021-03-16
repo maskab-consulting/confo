@@ -53,6 +53,6 @@ jobs:
 #        run: |
 #          pytest
 
-      - name: Run test cases
-        run: |
-          pytest
+#      - name: Run test cases
+#        run: |
+#          pytest
