@@ -32,7 +32,7 @@ class ZookeeperBackend(AbstractBackend):
     def load_credentials(self, credentials):
         self.parse_credentials(credentials)
         if (self.zookeeper_user == None) and (self.zookeeper_passwd == None):
-            self.zk_client = KazooClient(hosts=self.zookeeper_host + ":" + self.zookeeper_port)
+            self.zk_client = KazooClient(hosts=self.zookeeper_host + ":" + str(self.zookeeper_port))
         else:
             auth_data = [("digest", self.zookeeper_user + ":" + self.zookeeper_passwd)]
             self.zk_client = KazooClient(hosts=self.zookeeper_host + ":" + self.zookeeper_port, auth_data=auth_data)
