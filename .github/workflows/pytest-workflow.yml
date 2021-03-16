@@ -41,7 +41,6 @@ jobs:
       - name: Run ZooKeeper
         run: |
           docker run --name zookeeper1  -d \
-           --network app-tier \
            -e ZOO_SERVER_ID=1 \
            -e ZOO_SERVERS=0.0.0.0:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888 \
            -e ALLOW_ANONYMOUS_LOGIN=yes\
