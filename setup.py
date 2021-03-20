@@ -6,15 +6,15 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 
 # The text of the README file
 
-with open(HERE + "/README.md",'r') as f:
+with open(HERE + "/README.md", encoding='utf-8') as f:
     README = f.read()
 with open(HERE +'/requirements.txt') as f:
     required = f.read().splitlines()
 # This call to setup() does all the work
 setup(
     name="confo",
-    version="0.1.0",
-    # description="Confo is a configuration manager, built to support multiple backend systems.",
+    version="0.1.2",
+    description="Confo is a configuration manager, built to support multiple backend systems.",
     long_description=README,
     long_description_content_type='text/markdown',
     url="https://github.com/n3rdydad/confo",
