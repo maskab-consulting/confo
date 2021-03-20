@@ -7,7 +7,6 @@ colorama==0.4.4
 cryptography==3.4.6
 cytoolz==0.9.0.1
 docutils==0.16
-formation==0.1.27
 idna==2.10
 importlib-metadata==3.7.0
 iniconfig==1.1.1
