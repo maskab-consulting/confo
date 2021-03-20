@@ -34,7 +34,7 @@ class Confo:
     active_backend = None
     active_backend_name = None
 
-    def create_backend(self, credentials, name, backend_type):
+    def load_backend(self, credentials, name, backend_type):
         backend_class = backend_selector(backend_type)
         backend = backend_class()
         backend.load_credentials(credentials=credentials)
@@ -44,8 +44,6 @@ class Confo:
     def get_backends(self):
         return {"all_backends": list(self.backends.keys()), "active_backend": self.active_backend_name}
 
-    def exp(self):
-        return self.backends
 
     def activate_backend(self, backend_name):
         if backend_name in self.get_backends()["all_backends"]:

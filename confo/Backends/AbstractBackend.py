@@ -9,7 +9,7 @@
 
 # Import modules
 from abc import ABC, abstractmethod
-
+from ..Exceptions import *
 
 class AbstractBackend(ABC):
     configurations = {}
@@ -39,7 +39,7 @@ class AbstractBackend(ABC):
         if self.namespace_name in self.namespaces:
             return self.configurations[self.namespace_name]
         else:
-            raise Exception("Please select namespace")
+            raise NamespaceNotLoadedException("Please select namespace")
 
     def get(self, name, field=None):
         if field != None:
