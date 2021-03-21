@@ -129,7 +129,7 @@ a `NamespaceNotLoadedException` error will be raised.
 ```python 
 
 #choose namespace 
-confo.use_namespace("sales")
+config.use_namespace("sales")
 #check if a namespace is chosen
 print(config.get_namespaces())
 
@@ -373,7 +373,7 @@ print(config.get_backend())
 Lets activate the zookeeper backend.
 
 ```python
-config.config.activate_backend("zookeeper_backend")
+config.activate_backend("zookeeper_backend")
 config.get_backends()
 
 #RESULTS:
@@ -471,6 +471,7 @@ def mail_recipients(engine,config):
         sender_email(smtp_server=smtp_server,sender_email=sender_email,receiver_email=row['email'],password=password,port=port) 
         
 engine = build_engine(config)
+config.active_backend("systemB")
 email_config = config.get("email")
 mail_recipients(engine,email_config)
 
