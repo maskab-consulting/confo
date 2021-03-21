@@ -15,20 +15,24 @@
 
 ## About Confo
 Confo is a flexible multi backend configuration manager for python. Built to provide a unified configuration management
-interface in different environments.Confo supports both local configuration with json files and distributed configurations.
+interface in different environments.Confo supports both local configuration with json files and distributed configurations,
 best suited for micro-service and distributed systems development.
 
 ## Getting started
 1. Installation
 ```
 pip install confo
+
 ```
-2. Setup Backends 
+
+2.Setup Backends 
+
 Confo currently supports two backends, a `filesystem` backend and a `ZooKeeper` backend.
-   
+
 2.1 Filesystem backend
-The filesystem backend simply works by reading json files from the filesystem. An example configuration can be setup like below.Imagine you have a 
-sales database credentials you want to expose to your application and you want to use a sales forecasting model which is exposed via REST api.
+
+The filesystem backend simply works by reading json files from the filesystem. An example configuration can be setup like below. Imagine you have a 
+sales database with credentials you want to expose to your application, and you want to use a sales forecasting model which is exposed via REST api.
 Confo uses namespaces to separate logical groups of configurations. For example everything concerned with systems from the `sales` department can be stored in the
 `sales` namespace and every configuration concerned with systems from the `anlytics team` can be store in a namespace called `analytics`.
 
@@ -413,7 +417,7 @@ configuration znode and are expected to have json object stored within. Now imag
 
 ```
 
-Now lets build a python app that sends an email verification link to newly registered people.We decoupled configuration from actual code by using confo:
+Now lets build a python app that sends an email verification link to newly registered users.We decoupled configuration from actual code by using confo:
 
 ```python
 from confo.Confo import Confo

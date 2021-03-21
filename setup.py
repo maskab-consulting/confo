@@ -13,7 +13,7 @@ with open(HERE +'/requirements.txt') as f:
 # This call to setup() does all the work
 setup(
     name="confo",
-    version="0.1.2",
+    version="0.1.3",
     description="Confo is a configuration manager, built to support multiple backend systems.",
     long_description=README,
     long_description_content_type='text/markdown',
