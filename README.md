@@ -40,9 +40,9 @@ Confo uses namespaces to separate logical groups of configurations. For example 
 mkdir Configurations
 mkdir Configurations/sales
 mkdir Configurations/analytics
-echo "{'host':127.0.0.1', 'port':5432,'username':'kabelo','password':'confoRocks'}" > Configurations/sales/database.json
-echo "{'host':127.0.0.1', 'port':5432,'token':'2df228d6-890b-11eb-8dcd-0242ac130003','secret':'d51a8a7a-3286-4deb-8805-85f4528920ae 
-dcfb49c0-a251-4657-87df-44996ea308ee'}" > Configurations/analytics/api_one.json
+echo '{"host":"127.0.0.1", "port":5432,"username":"kabelo","password":"confoRocks"}" > Configurations/sales/database.json
+echo '{"host":"127.0.0.1", "port":5432,"token":"2df228d6-890b-11eb-8dcd-0242ac130003","secret":"d51a8a7a-3286-4deb-8805-85f4528920ae 
+dcfb49c0-a251-4657-87df-44996ea308ee"}' > Configurations/analytics/api_one.json
 ```
 In the setup above both namespaces only have one configuration,but each namespace can have infinite configurations. `Confo` uses a json files to store each configuration.
 ```
