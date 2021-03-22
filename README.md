@@ -90,12 +90,13 @@ the path where the configurations are stored.
 To list all backends loaded 
 ```python
 config.get_backends()
+#RESULTS:
 
 {'all_backends': ['example_backend'], 'active_backend': None}
 
 ```
 This return a dictionary with two keys: `all_backends` holds  list of all backends registered in this application; and `active_backend` holds the 
-name of the currently active backend.Note that active_backend is None meaning the manager cannot access any configuration.If any of the configuration 
+name of the currently active backend.Note that activate_backend is None meaning the manager cannot access any configuration.If any of the configuration 
 level methods are invoked a `BackendsActivationException` error is raised.Now to make sure a backend is active,
 
 ```python
