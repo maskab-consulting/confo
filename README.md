@@ -17,9 +17,8 @@
 Confo is a flexible multi backend configuration manager for python. Built to provide a unified configuration management
 interface in different environments.Confo supports both local configuration with json files and distributed configurations,
 best suited for micro-service and distributed systems development.
-
 ## Getting started
-1. Installation
+1.Installation
 ```
 pip install confo
 

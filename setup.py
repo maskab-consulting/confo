@@ -5,28 +5,27 @@ import os
 HERE = os.path.dirname(os.path.realpath(__file__))
 
 # The text of the README file
-
-with open(HERE + "/README.md", encoding='utf-8') as f:
+with open(HERE + "/pypiREADME.md", encoding='utf-8') as f:
     README = f.read()
 with open(HERE +'/requirements.txt') as f:
     required = f.read().splitlines()
+    setup(
+        name="confo",
+        version="0.1.6",
+        description="Confo is a configuration manager, built to support multiple backend systems",
+        long_description_content_type="text/markdown",
+        long_description=README,
+        url="https://github.com/n3rdydad/confo",
+        author="The nerdy dad (kabelo masemola)",
+        author_email="kn3rdydad@gmail.com",
+        license="Apache License 2.0",
+        classifiers=[
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.7",
+        ],
+        packages=find_packages(exclude=("tests",)),
+        include_package_data=True,
+        install_requires=required
+    )
 # This call to setup() does all the work
-setup(
-    name="confo",
-    version="0.1.3",
-    description="Confo is a configuration manager, built to support multiple backend systems.",
-    long_description=README,
-    long_description_content_type='text/markdown',
-    url="https://github.com/n3rdydad/confo",
-    author="The nerdy dad (kabelo masemola)",
-    author_email="kn3rdydad@gmail.com",
-    license="Apache License 2.0",
-    classifiers=[
-        "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-    ],
-    packages=find_packages(exclude=("tests",)),
-    include_package_data=True,
-    install_requires=required
-)

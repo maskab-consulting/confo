@@ -104,6 +104,7 @@ class ZookeeperBackend(AbstractBackend):
         self.use_namespace(recover_namespace)
 
     def persist_configuration(self, namespace, configuration):
+        self.recover_config = self.configurations[namespace]
         path = self.main_namespace + "/" + namespace + "/" + configuration
         self.zk_client.ensure_path(path)
         data = self.recover_config[configuration]
