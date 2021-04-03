@@ -15,9 +15,9 @@ with open(HERE +'/requirements.txt') as f:
         description="Confo is a configuration manager, built to support multiple backend systems",
         long_description_content_type="text/markdown",
         long_description=README,
-        url="https://github.com/n3rdydad/confo",
-        author="The nerdy dad (kabelo masemola)",
-        author_email="kn3rdydad@gmail.com",
+        url="https://github.com/sambe-consulting/confo",
+        author="Sambe Consulting",
+        author_email="development@sambe.co.za",
         license="Apache License 2.0",
         classifiers=[
             "License :: OSI Approved :: Apache Software License",
