@@ -24,7 +24,7 @@ def backend_selector(backend_type):
         return EtcdBackend
     elif backend_type == CONSUL_BACKEND:
         return ConsulBackend
-    elif backend_class ==REDIS_BACKEND:
+    elif backend_type ==REDIS_BACKEND:
         return RedisBackend
     elif backend_type == DATABASE_BACKEND:
         return DatabaseBackend
