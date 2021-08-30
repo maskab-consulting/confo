@@ -8,6 +8,11 @@ ELASTIC_BACKEND = 7
 
 from .FileBackend import FileBackend
 from .ZookeeperBackend import ZookeeperBackend
+from .EtcdBackend import EtcdBackend
+from .ConsulBackend import ConsulBackend
+from .RedisBackend import RedisBackend
+from .DatabaseBackend import DatabaseBackend
+from .ElasticBackend import ElasticBackend
 
 
 def backend_selector(backend_type):
