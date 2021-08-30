@@ -15,12 +15,20 @@ import os
 import json
 from json.decoder import JSONDecodeError
 
+
 from ..Exceptions import *
 
 
 class EtcdBackend(AbstractBackend):
+
+    def __init__(self):
+        self.host = None
+        self.port = None
+        self.user = None
+        self.password = None
+
     def load_credentials(self, credentials):
-        return super().load_credentials(credentials)
+        print(credentials)
 
     def use_namespace(self, system_name):
         super().use_namespace(system_name)
