@@ -11,7 +11,7 @@ with open(HERE +'/requirements.txt') as f:
     required = f.read().splitlines()
     setup(
         name="confo",
-        version="0.1.6.0",
+        version="0.1.6.2",
         description="Confo is a configuration manager, built to support multiple backend systems",
         long_description_content_type="text/markdown",
         long_description=README,

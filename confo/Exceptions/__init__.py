@@ -1,3 +1,11 @@
+from .ZooKeeperExceptions import *
+from .FileExceptions import *
+from .EtcdExceptions import *
+from .RedisExceptions import *
+from .ConsulExceptions import *
+from .DataBaseException import *
+from .ElasticSearchException import *
+from .NamespaceException import  *
 
 # Exceptions
 
@@ -7,17 +15,4 @@ class BackendsActivationException(Exception):
 class BackendNotFoundException(Exception):
     pass
 
-class FileNotFoundException(Exception):
-    pass
 
-class ZookeeperHostNotFoundException(Exception):
-    pass
-
-class ZookeeperPortNotFoundException(Exception):
-    pass
-
-class NamespaceExistsException(Exception):
-    pass
-
-class NamespaceNotLoadedException(Exception):
-    pass
