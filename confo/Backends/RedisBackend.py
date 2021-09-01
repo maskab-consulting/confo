@@ -79,31 +79,45 @@ class RedisBackend(AbstractBackend):
             print("Namespace: {} does not exist".format(system_name))
 
     def get_all(self):
-        if self.namespaces["current_namespace"] in self.namespaces:
-            return self.configurations[self.namespaces["current_namespace"]]
+        if self.get_current_namespace() in self.namespaces:
+            return self.configurations[self.get_current_namespace()]
         else:
             raise NamespaceNotLoadedException("Please select a namespace")
 
     def get(self, name, field=None):
-        return super().get(name, field)
+        if field != None:
+            try:
+                return self.configurations[self.get_current_namespace()][name][field]
+            except:
+                print("configuration {} or field {} are not set".format(name, field))
+        else:
+            try:
+                return self.configurations[self.get_current_namespace()][name]
+            except:
+                print("configuration {} is not set".format(name))
 
     def set(self, config, field, value):
         if type(field) == str:
             try:
-                self.configurations[self.current_namespace][config][field] = value
+                self.configurations[self.get_current_namespace()][config][field] = value
             except:
-                self.configurations[self.current_namespace][config] = {}
-                self.configurations[self.current_namespace][config][field] = value
+                self.configurations[self.get_current_namespace()][config] = {}
+                self.configurations[self.get_current_namespace()][config][field] = value
         elif (type(field) == dict or type(field) == list) and value == None:
             try:
-                self.configurations[self.current_namespace][config] = field
-                print(self.current_namespace)
+                self.configurations[self.get_current_namespace()][config] = field
+                print(self.get_current_namespace())
                 print(self.configurations)
             except:
                 print("hello world")
 
     def persist(self, namespace, config):
-        return super().persist(namespace, config)
+        if namespace == False:
+            self.persist_everything()
+        elif config == False:
+            self.persist_namespace(namespace)
+        else:
+            self.persist_configuration(namespace, config)
 
     def get_count(self):
         return super().get_count()
@@ -131,8 +145,11 @@ class RedisBackend(AbstractBackend):
     def get_children(self) -> list:
         return [namespace.decode("utf-8") for namespace in self.rs_client.keys("*{}*".format(self.main_namespace))]
     
-    def get_configs(self):
+    def get_configs(self) -> dict:
         return self.configurations
+    
+    def get_current_namespace(self) -> str:
+        return self.namespaces["current_namespace"]
 
     def persist_everything(self) -> None:
         for namespace in self.namespaces:
