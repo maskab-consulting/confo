@@ -68,9 +68,12 @@ class RedisBackend(AbstractBackend):
     def get_namespaces(self):
         return self.namespaces
 
-    def use_namespace(self, system_name):
-        
-        namespace = self.main_namespace + system_name
+    def use_namespace(self, system_name: str):
+
+        if system_name.startswith(self.main_namespace):
+            namespace = system_name
+        else:
+            namespace = self.main_namespace + system_name
         
         if namespace in self.get_namespaces()["all_namespaces"]:
             self.current_namespace = namespace
@@ -159,10 +162,13 @@ class RedisBackend(AbstractBackend):
                 "Namespace {} is not loaded, Load namespace with obj.use_namespace({})".format(namespace, namespace)
             )
         self.namespace_configs = self.configurations[namespace]
-        if self.rs_client.exists(namespace) != 1:
+        if (self.rs_client.exists(namespace) != 1) and (namespace in self.namespaces["all_namespaces"]):
             self.rs_client.set(namespace, "null")
-        
+        elif (self.rs_client.exists(namespace) != 1) and (namespace not in self.namespaces["all_namespaces"]):
+            self.create_namespace(namespace)
+
         self.use_namespace(namespace)
+        print(namespace)
         for nsp_config_name in self.namespace_configs.keys():
             self.persist_configuration(namespace, nsp_config_name)
 
