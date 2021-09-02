@@ -486,7 +486,7 @@ The script above shows a simple use case for a robust configuration manager.
 systems running. Etcd is most well known for being one of the core components of Kubernetes, where it
 stores and manages Kubernetes state data, configuration data and metadata. Etcd can be relied upon to
 be a single source of truth at any given point in time.</p>
-<p>Install Etcd</p>
+<b>Install Etcd</b>
 <p>1. To help with the commands that follow, set these environment variables:</p>
 
 ```
@@ -545,7 +545,20 @@ make
 sudo cp src/redis-server /usr/local/bin/
 sudo cp src/redis-cli /usr/local/bin/
 ```
+<p> Or just using sudo make install.</p>
 
+<b> Starting Redis</b>
+<p> The simplest way to start the Redis server is just executing the redis-server binary without any argument.</p>
+
+```
+
+$ redis-server
+[28550] 01 Aug 19:29:28 # Warning: no config file specified, using the default config. In order to specify a config file use 'redis-server /path/to/redis.conf'
+[28550] 01 Aug 19:29:28 * Server started, Redis version 2.2.12
+[28550] 01 Aug 19:29:28 * The server is now ready to accept connections on port 6379
+... more logs ...
+
+```
 
 
 

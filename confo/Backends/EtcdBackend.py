@@ -19,7 +19,7 @@ from json.decoder import JSONDecodeError
 from ..Exceptions import *
 
 
-class EtcdBackend2(AbstractBackend):
+class EtcdBackend(AbstractBackend):
 
     def __init__(self):
         self.host = None
