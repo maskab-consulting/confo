@@ -28,7 +28,7 @@ class ZookeeperBackend(AbstractBackend):
         self.zk_client = None
         self.namespace_name = '*'
         self.main_namespace = "/confo/"
-        self.namespaces = None
+        self.namespaces = None  # /confo/*
 
     def load_credentials(self, credentials):
         self.parse_credentials(credentials)
