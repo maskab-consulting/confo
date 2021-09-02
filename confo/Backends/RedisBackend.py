@@ -37,7 +37,7 @@ class RedisBackend(AbstractBackend):
         }
 
         self.configurations: dict = {}
-        self.config: dict = {}
+        self.namespace_configs: dict = {}
 
     def load_credentials(self, credentials):
 
@@ -79,7 +79,7 @@ class RedisBackend(AbstractBackend):
             print("Namespace: {} does not exist".format(system_name))
 
     def get_all(self):
-        if self.get_current_namespace() in self.namespaces:
+        if self.get_current_namespace() in self.namespaces["all_namespaces"]:
             return self.configurations[self.get_current_namespace()]
         else:
             raise NamespaceNotLoadedException("Please select a namespace")
@@ -106,12 +106,10 @@ class RedisBackend(AbstractBackend):
         elif (type(field) == dict or type(field) == list) and value == None:
             try:
                 self.configurations[self.get_current_namespace()][config] = field
-                print(self.get_current_namespace())
-                print(self.configurations)
             except:
                 print("hello world")
 
-    def persist(self, namespace, config):
+    def persist(self, namespace=False, config=False):
         if namespace == False:
             self.persist_everything()
         elif config == False:
@@ -152,7 +150,7 @@ class RedisBackend(AbstractBackend):
         return self.namespaces["current_namespace"]
 
     def persist_everything(self) -> None:
-        for namespace in self.namespaces:
+        for namespace in self.namespaces["all_namespaces"]:
             self.persist_namespace(namespace)
     
     def persist_namespace(self, namespace) -> None:
@@ -160,16 +158,19 @@ class RedisBackend(AbstractBackend):
             raise NamespaceNotLoadedException(
                 "Namespace {} is not loaded, Load namespace with obj.use_namespace({})".format(namespace, namespace)
             )
-        self.config = self.configurations[namespace]
+        self.namespace_configs = self.configurations[namespace]
         if self.rs_client.exists(namespace) != 1:
             self.rs_client.set(namespace, "null")
         
         self.use_namespace(namespace)
-        for configuration in self.config:
-            self.persist_configuration(namespace, configuration)
+        for nsp_config_name in self.namespace_configs.keys():
+            self.persist_configuration(namespace, nsp_config_name)
 
-    def persist_configuration(self, namespace, configuration) -> None:
-        self.config = self.configurations[namespace]
-        dir = "{}".format(namespace + str(configuration))
-        data = self.config[configuration]
+    def persist_configuration(self, namespace, config_name) -> None:
+        self.namespace_configs = self.configurations[namespace]
+        dir = "{}/{}".format(namespace, config_name) # /confo/db/mysqli
+        data = self.namespace_configs[config_name]
         self.rs_client.set(dir, str.encode(json.dumps(data)))
+
+        # print("nsp : {}, data : {}".format(dir, self.rs_client.get(dir)))
+        
