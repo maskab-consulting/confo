@@ -21,7 +21,6 @@ from ..Exceptions import *
 class RedisBackend(AbstractBackend):
 
     def __init__(self) -> None:
-
         self.redis_host: str = None
         self.redis_port: int = 0
         self.redis_db: int = 0
@@ -42,46 +41,105 @@ class RedisBackend(AbstractBackend):
     def load_credentials(self, credentials):
 
         self.parse_credentials(credentials)
-        if (self.redis_user == None) and (self.redis_password == None):
+        if (self.redis_user is None) and (self.redis_password is None):
             self.rs_client = Redis(host=self.redis_host, port=self.redis_port, db=self.redis_db)
         else:
             pass
 
         self.namespaces["all_namespaces"] = self.get_children()
 
-    def create_namespace(self, namespace):
+    def create_namespace(self, namespace) -> None:
+        """
+        Create top level namespace for the configurations
 
-        root_namespace = self.main_namespace + namespace # /confo/mysql
+        Args:
+            namespace ([str]): The name of the namespace
+        """
 
-        self.rs_client.set(root_namespace, "null")
-        self.configurations[root_namespace] = {}
-        self.namespaces["all_namespaces"] = self.get_children()
+        root_namespace = self.main_namespace + namespace                            # create the namespace with combination of the main namespace e.g /confo/{namespace} 
 
-    def persist(self, namespace=False, config=False):
+        self.rs_client.set(root_namespace, "null")                                  # Since redis takes Key-Value, the namespace value is set to Null
+        self.configurations[root_namespace] = {}                                    # Create an entry of the namespace in configurations
+        self.namespaces["all_namespaces"] = self.get_children()                     # Get updated list of namespaces after creating a new space 
+
+    def persist(self, namespace=False, config=False) -> None:
+        """
+        Save all configurations in this instance to Redis cache itself
+
+        Args:
+            namespace (bool, str): The name of the namespace you want to persist
+            config (bool, str): The name of the config you want to persist
+        """
+
         if namespace == False:
+            '''
+                So if the namespace to persist is not specified, all namespaces with be persisted...
+                meaning that all their configurations also will be persisted
+            '''
             self.persist_everything()
+
         elif config == False:
+            '''
+                If namespace is specified without the configuration name, all configurations of this namespace will persisted
+            '''
             self.persist_namespace(namespace)
+
         else:
+            '''
+                Only the configuration in the specified namespace will be persisted
+            '''
             self.persist_configuration(namespace, config)
 
-    def get_namespaces(self):
+    def get_namespaces(self) -> dict:
+        """
+        Returns a dictionary of all the namespaces this instance and also the currently used namespace
+
+        Returns:
+            dict: The namespaces in the instance
+        """
         return self.namespaces
 
     def use_namespace(self, system_name: str):
+        """
+        For all methods related to the Confo, you have to activate the namespace you want to use,
+        This methods activates the namespace you want to use
 
-        if system_name.startswith(self.main_namespace):
+        Args:
+            system_name (str): [description]
+        """
+
+        if system_name.startswith(self.main_namespace):                                 # checks if the system_name starts with '/confo/'
+            '''
+                If the system_name starts with '/confo/' then the namespace is the system_name
+            '''
             namespace = system_name
         else:
+            '''
+                If not then create the namespace as the combination of main namespace and the system_name e.g /confo/{system_name}
+            '''
             namespace = self.main_namespace + system_name
         
-        if namespace in self.get_namespaces()["all_namespaces"]:
-            self.current_namespace = namespace
+        if namespace in self.get_namespaces()["all_namespaces"]:                        # Checks if the namespace already exists in the list of all namespaces
+            '''
+                Since the specified namespace to use exists, activate it by setting it as the current in-use namespace
+            '''
             self.namespaces["current_namespace"] = self.current_namespace
         else:
+            '''
+                Since it doesn't exists, it cannot be activated
+            '''
             print("Namespace: {} does not exist".format(system_name))
 
-    def get_all(self):
+    def get_all(self) -> dict:
+        """
+        Shows all the configurations of the namespace that was activated
+
+        Raises:
+            NamespaceNotLoadedException: Is raised when the namespace was not activated or the namespace does not exist
+
+        Returns:
+            dict: All dictionaries related to the current namespace
+        """
         if self.get_current_namespace() in self.namespaces["all_namespaces"]:
             return self.configurations[self.get_current_namespace()]
         else:
@@ -121,7 +179,7 @@ class RedisBackend(AbstractBackend):
             self.persist_configuration(namespace, config)
 
     def get_count(self):
-        return super().get_count()
+        return len(self.get_all())
 
     def reload(self):
         print("hello world")
