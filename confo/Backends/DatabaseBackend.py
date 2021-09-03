@@ -1,9 +1,8 @@
 # **************************************************************************#
-# Title:                    ConsulBackend                                     #
-# Description:              This backend is used to handle  consul            #
-#                            configurations                                 #
-# Author:                   Neo Thamela <neo.thamela@sambeconsulting.com>   #
-# Author:                   Karabo Maleka <neo.thamela@sambeconsulting.com> #
+# Title:                    DatabaseBackend                                 #
+# Description:              This backend is used to handle database         #
+#                           configurations                                  #
+# Author:                   Kabelo Masemola <kn3rdydad@gmail.com>           #
 # Original Date:            06 March 2021                                   #
 # Update Date:              14 March 2021                                   #
 # Version:                  0.1.0                                           #

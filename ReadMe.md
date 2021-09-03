@@ -487,78 +487,174 @@ systems running. Etcd is most well known for being one of the core components of
 stores and manages Kubernetes state data, configuration data and metadata. Etcd can be relied upon to
 be a single source of truth at any given point in time.</p>
 <b>Install Etcd</b>
-<p>1. To help with the commands that follow, set these environment variables:</p>
-
-```
-ETCD_VER=v3.5.0
-ETCD_BIN=/tmp/test-etcd
-GOOGLE_URL=https://storage.googleapis.com/etcd
-GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
-
-```
-
-<p>2. Download and install etcd from pre-built binaries:</p>
+<p>1. Download and install etcd from pre-built binaries:</p>
 <li>Download the compressed archive file for your platform from <a href="https://github.com/etcd-io/etcd/releases/tag/v3.5.0">Releases</a>, choosing release <a href="https://github.com/etcd-io/etcd/releases/tag/v3.5.0">v3.5.0 </a> or later.</li>
 <li>Unpack the archive file. This results in a directory containing the binaries.</li>
 <li>Add the executable binaries to your path. For example, rename and/or move the binaries to a directory in your path (like `usr/local/bin `),or add the directory created by the previous step to your path.</li>
-<li>From a shell, test that etcd is in your path</li>
+<li>From a shell, test that `etcd` is in your path</li>
 
 ```
 $ etcd --version
 etcd Version: 3.5.0
 ...
 ```
-<p> 2.4 Redis Backend </p>
-<p> Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker. Redis provides data structures such as <a href="https://redis.io/topics/data-types-intro#strings"> strings </a>, <a href="https://redis.io/topics/data-types-intro#hashes"> hashes </a>, <a href="https://redis.io/topics/data-types-intro#lists"> lists </a>, <a href="https://redis.io/topics/data-types-intro#sets"> sets </a>, <a href="https://redis.io/topics/data-types-intro#sorted-sets"> sorted sets </a> with range queries, bitmaps, hyperloglogs, geospatial indexes, and streams. Redis has built-in replication, Lua scripting, LRU eviction, transactions, and different levels of on-disk persistence, and provides high availability via Redis Sentinel and automatic partitioning with Redis Cluster.</p>
-<p> You can run atomic operations on these types, like appending to a string; incrementing the value in a hash; pushing an element to a list; computing set intersection, union and difference; or getting the member with highest ranking in a sorted set.
+<p> 2. Build from source </p>
+<p> If you have <a href="https://golang.org/doc/install">Go version 1.13+</a>, you can build etcd from source by following these steps:</p>
+<p><a href="https://github.com/etcd-io/etcd/archive/v3.4.16.zip"> Download the etcd repo as a zip file </a>and unzip it, or clone the repo using the following command.</p>
 
-To achieve top performance, Redis works with an in-memory dataset. Depending on your use case, you can persist your data either by periodically dumping the dataset to disk or by appending each command to a disk-based log. You can also disable persistence if you just need a feature-rich, networked, in-memory cache. Redis also supports asynchronous replication, with very fast non-blocking first synchronization, auto-reconnection with partial resynchronization on net split.</p>
+```
+$ git clone -b v3.4.16 https://github.com/etcd-io/etcd.git
 
-<p>Other features include:</p>
+```
+<p> To build from main@HEAD, omit the -b v3.4.16 flag.</p>
+<p><b> Change directory:</b></p>
 
-<li> <a href="https://redis.io/topics/transactions"> Transactions </a> </li>
-<li> <a href="https://redis.io/topics/pubsub"> Pub/Sub </a> </li>
-<li> <a href="https://redis.io/commands/eval"> Lua scripting </a> </li>
-<li> <a href="https://redis.io/commands/expire"> Keys with a limited time-to-live </a> </li>
-<li> <a href="https://redis.io/topics/lru-cache"> LRU eviction of keys </a> </li>
-<li> <a href="https://redis.io/topics/sentinel"> Automatic failover </a> </li><br>
+```
+$ cd etcd
+```
+<p><b>Run the build script:</b></p>
+
+```
+$ ./build
+
+```
+<p> The binaries are under the bin directory.</p>
+<p><b>Add the full path to the bin directory to your path, for example:</b></p>
+
+```
+$ export PATH="$PATH:`pwd`/bin"
+
+```
+<p><b>Test that etcd is in your path:</b></p>
+
+```
+$ etcd --version
+
+```
+<p> 2.4 Consul Backend </p>
+<p> Consul is a service mesh solution providing a full featured control plane with service discovery, configuration, and segmentation functionality. Each of these features can be used individually as needed, or they can be used together to build a full service mesh. Consul requires a data plane and supports both a proxy and native integration model. Consul ships with a simple built-in proxy so that everything works out of the box, but also supports 3rd party proxy integrations such as Envoy.</p>
+
+<p>1.<b> Download and install consul from precompiled binaries:</b></p>
+<p> To install the precompiled binary, download the appropriate package for your system </p>
+<p>1.1 Download consul for linux</p>
+
+```
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get update && sudo apt-get install consul
+
+```
+<p> 1.2 Install consul</p>
+<p>Once the zip is downloaded, unzip it into any directory. The consul binary inside is all that is necessary to run Consul (or consul.exe for Windows). No additional files are required to run Consul.
+Copy the binary to anywhere on your system. If you intend to access it from the command-line, make sure to place it somewhere on your PATH.</p>
+
+<p>2. <b> Compiling from Source</b></p>
+<p> To compile from source, you will need <a href="https://golang.org/"> Go </a> installed and configured properly (including a GOPATH environment variable set), as well as a copy of <a href="https://www.git-scm.com/"> git </a> in your PATH. </p>
+<p>1. Clone the Consul repository from GitHub into your GOPATH:</p>
+
+```
+$ mkdir -p $GOPATH/src/github.com/hashicorp && cd !$
+$ git clone https://github.com/hashicorp/consul.git
+$ cd consul
+
+```
+<p>2. Bootstrap the project. This will download and compile libraries and tools needed to compile Consul:</p>
+
+```
+$ make tools
+
+```
+<p> 3. Build Consul for your current system and put the binary in ./bin/ (relative to the git checkout). The make dev target is just a shortcut that builds consul for only your local build environment (no cross-compiled targets).</p> 
+
+```
+$ make dev
+
+```
+<p> 3. <b>Verifying the Installation</p></b>
+<p> To verify Consul is properly installed, run consul -v on your system. You should see help output. If you are executing it from the command line, make sure it is on your PATH or you may get an error about Consul not being found</p>
+
+```
+consul -v
+
+```
+
+<p> 2.5 Redis Backend </p>
+<p> Redis is an open source (BSD licensed), in-memory <b>data structure store </b>, used as a database, cache, and message broker. Redis provides data structures such as <a href="https://redis.io/topics/data-types-intro#strings"> strings </a>, <a href="https://redis.io/topics/data-types-intro#hashes"> hashes </a>, <a href="https://redis.io/topics/data-types-intro#lists"> lists </a>, <a href="https://redis.io/topics/data-types-intro#sets"> sets </a>, <a href="https://redis.io/topics/data-types-intro#sorted-sets"> sorted sets </a> with range queries, <a href="https://redis.io/topics/data-types-intro#bitmaps">bitmaps</a>,<a href="https://redis.io/topics/data-types-intro#hyperloglogs"> hyperloglogs </a>, <a href="https://redis.io/commands/geoadd">geospatial indexes</a>, and <a href="https://redis.io/topics/streams-intro">streams</a>. Redis has built-in replication, Lua scripting, LRU eviction, transactions, and different levels of on-disk persistence, and provides high availability via Redis Sentinel and automatic partitioning with Redis Cluster.</p>
 
 <b> Installing Redis</b>
 
-<p> You can either download the latest Redis tar ball from the <a href="https://redis.io/"> redis.io </a> web site, or you can alternatively use this special URL that always points to the latest stable Redis version, that is, http://download.redis.io/redis-stable.tar.gz.
-
-In order to compile Redis follow these simple steps:
-
-</p>
+<p>1. From source code </p>
+<p> Download, extract and compile Redis with:</p>
 
 ```
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
+$ wget https://download.redis.io/releases/redis-6.2.5.tar.gz
+$ tar xzf redis-6.2.5.tar.gz
+$ cd redis-6.2.5
+$ make
+```
+<p> The binaries that are now compiled are available in the src directory. </p>
+<p> 2. Run Redis with:</p>
+
+```
+$ src/redis-server
+
+```
+<p>2.6 Database Backend</p>
+
+<p> 2.7 Elastic Search Backend</p>
+<p>Elasticsearch is the distributed search and analytics engine at the heart of the Elastic Stack. Logstash and Beats facilitate collecting, aggregating, and enriching your data and storing it in Elasticsearch. Kibana enables you to interactively explore, visualize, and share insights into your data and manage and monitor the stack. Elasticsearch is where the indexing, search, and analysis magic happens.</p>
+
+<p> 1. <b>Download and install archive from linux</b></p>
+
+<p> The Linux archive for Elasticsearch v7.14.1 can be downloaded and installed as follows: </p>
+
+```
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.14.1-linux-x86_64.tar.gz
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.14.1-linux-x86_64.tar.gz.sha512
+shasum -a 512 -c elasticsearch-7.14.1-linux-x86_64.tar.gz.sha512 
+tar -xzf elasticsearch-7.14.1-linux-x86_64.tar.gz
+cd elasticsearch-7.14.1/ 
+
+```
+<p>2. <b>Enable automatic creation of system indices</b> </p>
+<p>Some commercial features automatically create indices within Elasticsearch. By default, Elasticsearch is configured to allow automatic index creation, and no additional steps are required. However, if you have disabled automatic index creation in Elasticsearch, you must configure action.auto_create_index in elasticsearch.yml to allow the commercial features to create the following indices:</p>
+
+```
+action.auto_create_index: .monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*
+
+```
+<p> 3. <b>Run ElasticSearch from the command line</b></p>
+
+```
+./bin/elasticsearch
+
+```
+<p> 4. <b> Check ElasticSearch is running</b></p>
+
+```
+GET /
 
 ```
 
-<p> It is a good idea to copy both the Redis server and the command line interface into the proper places, either manually using the following commands:</p>
 
-```
-sudo cp src/redis-server /usr/local/bin/
-sudo cp src/redis-cli /usr/local/bin/
-```
-<p> Or just using sudo make install.</p>
 
-<b> Starting Redis</b>
-<p> The simplest way to start the Redis server is just executing the redis-server binary without any argument.</p>
 
-```
 
-$ redis-server
-[28550] 01 Aug 19:29:28 # Warning: no config file specified, using the default config. In order to specify a config file use 'redis-server /path/to/redis.conf'
-[28550] 01 Aug 19:29:28 * Server started, Redis version 2.2.12
-[28550] 01 Aug 19:29:28 * The server is now ready to accept connections on port 6379
-... more logs ...
 
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

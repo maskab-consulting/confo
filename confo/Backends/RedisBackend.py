@@ -1,13 +1,12 @@
-# **************************************************************************#
-# Title:                    ConsulBackend                                     #
-# Description:              This backend is used to handle  consul            #
-#                            configurations                                 #
-# Author:                   Neo Thamela <neo.thamela@sambeconsulting.com>   #
-# Author:                   Karabo Maleka <neo.thamela@sambeconsulting.com> #
-# Original Date:            06 March 2021                                   #
-# Update Date:              14 March 2021                                   #
-# Version:                  0.1.0                                           #
-# **************************************************************************#
+# *******************************************************************************#
+# Title:                    RedisBackend                                         #
+# Description:              This backend is used to handle  redis                #
+#                           configurations                                       #
+# Author:                   Tshepang Maila<tshepang.maila@sambeconsulting.com>   #
+# Original Date:            06 March 2021                                        #
+# Update Date:              14 March 2021                                        #
+# Version:                  0.1.0                                                #
+# *******************************************************************************#
 
 
 from .AbstractBackend import AbstractBackend
