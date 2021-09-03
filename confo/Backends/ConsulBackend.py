@@ -26,6 +26,7 @@ import socket
 class ConsulBackend(AbstractBackend):
     def __init__(self):
         self.configurations = {}
+        self.namespace_config = {}
         self.cons_user = None
         self.cons_password = None
         self.DEFAULT_ENDPOINT = None
@@ -40,18 +41,17 @@ class ConsulBackend(AbstractBackend):
         self.cons_client = None
         self.namespace_name = '*'
         self.main_namespace = "/confo/"
-        self.namespaces = None
-        self.db = None
+        self.namespaces = {"all_namespaces": [], "current_namespace": ""}
         self.curr_namespace = None
 
     def load_credentials(self, credentials):
         self.parse_credentials(credentials)
         if (self.cons_user is None) and (self.cons_password is None):
-            self.cons_client = consul.Consul(host=self.DEFAULT_HOST, port=self.DEFAULT_PORT, db=self.db)
+            self.cons_client = consul.Consul(host=self.DEFAULT_HOST, port=self.DEFAULT_PORT)
         else:
             raise ClientError("Unable to start client")
 
-        self.namespaces = self.get_children()
+        self.namespaces["all_namespaces"] = self.get_children()
 
     def use_namespace(self, system_name):
         namespace = self.main_namespace + system_name
@@ -61,16 +61,19 @@ class ConsulBackend(AbstractBackend):
             return {'message': "Namespace '{}' not found".format(system_name)}
 
     def get_namespaces(self):
-        return super().get_namespaces()
+        return self.namespaces
 
     def create_namespace(self, namespace):
         root = self.main_namespace + namespace
         self.cons_client.set(root, "null")
         self.configurations[root] = {}
-        self.namespaces = self.cons_client.get(key='', recurse=True)
+        self.namespaces["all_namespaces"] = self.cons_client.get(key='', recurse=True)
 
     def get_all(self):
-        return super().get_all()
+        if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
+            return self.configurations[self.find_curr_namespace()]
+        else:
+            raise NamespaceNotLoadedException("Namespace not loaded")
 
     def get(self, name, field=None):
         return super().get(name, field)
@@ -139,6 +142,15 @@ class ConsulBackend(AbstractBackend):
     def get_children(self):
         return [namespace.decode('utf-8') for namespace in self.cons_client.keys("*{}*".format(self.main_namespace))]
 
+    def return_all(self):
+        if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
+            return self.configurations[self.find_curr_namespace()]
+        else:
+            raise NamespaceNotLoadedException("Namespace Not Found")
+
+    def find_curr_namespace(self):
+        return self.main_namespace + self.namespaces["current_namespace"]
+
     def persist_everything(self):
         for namespace in self.namespaces:
             self.persist_namespace(namespace)
@@ -166,5 +178,3 @@ class ConsulBackend(AbstractBackend):
         self.cons_client.ensure_path(path)
         data = self.recover_config[configuration]
         self.cons_client.set(path, str.encode(json.dumps(data)))
-
-
