@@ -144,9 +144,19 @@ class RedisBackend(AbstractBackend):
             raise RedisPortNotFoundException("Please set 'redis_post' in your credentials")
 
     def get_children(self) -> list:
-        return [namespace.decode("utf-8") for namespace in self.rs_client.keys("*{}*".format(self.main_namespace))]
-    
+        children = []
+        for namespace in self.rs_client.keys("*{}*".format(self.main_namespace)):
+            if len(str(namespace.decode("utf-8")).split("/")) == 3:
+                children.append(namespace.decode("utf-8"))
+        return children
+
     def get_configs(self) -> dict:
+        """
+        Will return all configurations this instance has
+
+        Returns:
+            dict: all configurations of the instance
+        """
         return self.configurations
     
     def get_current_namespace(self) -> str:
