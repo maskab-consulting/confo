@@ -609,7 +609,7 @@ $ src/redis-server
 
 <li>Retrieving a value (if there is one) stored and associated with a given key</li>
 <li>Deleting the value (if there is one) stored and associated with a given key</li>
-<li>Setting, updating, and replacing the value (if there is one) associated with a given key</li>
+<li>Setting, updating, and replacing the value (if there is one) associated with a given key</li><br>
 
 <p> 2.7 Elastic Search Backend</p>
 <p>Elasticsearch is the distributed search and analytics engine at the heart of the Elastic Stack. Logstash and Beats facilitate collecting, aggregating, and enriching your data and storing it in Elasticsearch. Kibana enables you to interactively explore, visualize, and share insights into your data and manage and monitor the stack. Elasticsearch is where the indexing, search, and analysis magic happens.</p>
