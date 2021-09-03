@@ -4,3 +4,6 @@ class Etcd3HostNotFoundException(Exception):
 
 class Etcd3PortNotFoundException(Exception):
     pass
+
+class ConfigurationNotSetException(Exception):
+    pass
