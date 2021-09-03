@@ -71,14 +71,14 @@ class RedisBackend(AbstractBackend):
             config (bool, str): The name of the config you want to persist
         """
 
-        if namespace == False:
+        if namespace is False:
             '''
                 So if the namespace to persist is not specified, all namespaces with be persisted...
                 meaning that all their configurations also will be persisted
             '''
             self.persist_everything()
 
-        elif config == False:
+        elif config is False:
             '''
                 If namespace is specified without the configuration name, all configurations of this namespace will persisted
             '''
@@ -123,7 +123,7 @@ class RedisBackend(AbstractBackend):
             '''
                 Since the specified namespace to use exists, activate it by setting it as the current in-use namespace
             '''
-            self.namespaces["current_namespace"] = self.current_namespace
+            self.namespaces["current_namespace"] = namespace
         else:
             '''
                 Since it doesn't exists, it cannot be activated
@@ -146,7 +146,7 @@ class RedisBackend(AbstractBackend):
             raise NamespaceNotLoadedException("Please select a namespace")
 
     def get(self, name, field=None):
-        if field != None:
+        if field is not None:
             try:
                 return self.configurations[self.get_current_namespace()][name][field]
             except:
@@ -170,19 +170,38 @@ class RedisBackend(AbstractBackend):
             except:
                 print("hello world")
 
-    def persist(self, namespace=False, config=False):
-        if namespace == False:
-            self.persist_everything()
-        elif config == False:
-            self.persist_namespace(namespace)
-        else:
-            self.persist_configuration(namespace, config)
+    def get_count(self) -> int:
+        """
+        Returns the count of configurations in the activated namespace
 
-    def get_count(self):
+        Returns:
+            int: count of configurations
+        """
         return len(self.get_all())
 
     def reload(self):
-        print("hello world")
+        """
+        Extracts configurations and namespaces already saved from Redis cache into this instance
+        """
+
+        if self.get_current_namespace() not in self.get_namespaces()["all_namespaces"]:
+            raise NamespaceNotLoadedException("Namespace : {} does not exist".format(self.get_current_namespace()))
+
+        if len(self.configurations) == 0:
+            self.configurations[self.get_current_namespace()]
+
+        config_paths = [config_namespace.decode("utf-8") for config_namespace in self.rs_client.keys("*{}/*".format(self.get_current_namespace()))]      # Extracts configuration namespaces
+        for c_path in config_paths:
+            data = (self.rs_client.get(c_path)).decode("utf-8")
+            if data == '':
+                data = "{}"
+
+            config_name = str(c_path).split("/").pop()
+            print(config_name)
+            try:
+                self.configurations[self.get_current_namespace()][config_name] = json.loads(data)
+            except ValueError as e:
+                self.configurations[self.get_current_namespace()][config_name] = json.loads("{}")        
 
     def parse_credentials(self, credentials: dict) -> None:
         
@@ -218,6 +237,7 @@ class RedisBackend(AbstractBackend):
         return self.configurations
     
     def get_current_namespace(self) -> str:
+
         return self.namespaces["current_namespace"]
 
     def persist_everything(self) -> None:
