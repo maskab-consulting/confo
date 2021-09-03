@@ -49,22 +49,28 @@ class EtcdBackend(AbstractBackend):
                                            user=self.etcd_user,
                                            password=self.etcd_passwd)
         self.namespaces["all_namespaces"] = self.get_children(self.etcd_client.get_all())
+        print(self.namespaces["all_namespaces"])
+
+    def create_namespace(self, namespace):
+        self.etcd_client.put(self.main_namespace + namespace, self.main_namespace + namespace)
+        self.configurations[self.main_namespace + namespace] = {}
+        self.namespaces["all_namespaces"] = self.get_children(self.etcd_client.get_all())
 
     def use_namespace(self, system_name):
-        if system_name in self.get_namespaces()["all_namespaces"]:
-            self.namespaces["current_namespace"] = system_name
-            self.configurations[self.main_namespace + system_name] = {}
+        if system_name.startswith(self.main_namespace):
+            namespace = system_name
+        else:
+            namespace = self.main_namespace + system_name
+
+        if namespace in self.get_namespaces()["all_namespaces"]:
+            self.namespaces["current_namespace"] = namespace
+            self.configurations[namespace] = {}
             # self.reload()
         else:
-            print("Namespace: " + system_name + " does not exist")
+            print("Namespace: " + namespace + " does not exist")
 
     def get_namespaces(self):
         return self.namespaces
-
-    def create_namespace(self, namespace):
-        self.etcd_client.put(self.main_namespace + namespace, "")
-        self.configurations[self.main_namespace + namespace] = {}
-        self.namespaces["all_namespaces"] = self.get_children(self.etcd_client.get_all())
 
     def get_all(self):
         if self.get_current_namespace() in self.namespaces["all_namespaces"]:
@@ -95,13 +101,10 @@ class EtcdBackend(AbstractBackend):
             try:
                 self.configurations[self.get_current_namespace()][config] = field
             except:
-                print("Did not set Configuration")
+                print(self.configurations)
 
     def get_current_namespace(self):
-        return self.main_namespace + self.namespaces["current_namespace"]
-
-    def persist(self, namespace, config):
-        return super().persist(namespace, config)
+        return self.namespaces["current_namespace"]
 
     def get_count(self):
         return len(self.get_children(self.etcd_client.get_all()))
@@ -130,12 +133,6 @@ class EtcdBackend(AbstractBackend):
             v.append(y.decode('utf-8'))
         return v
 
-    def get_all(self):
-        if self.get_current_namespace() in self.namespaces["all_namespaces"]:
-            return self.configurations[self.get_current_namespace()]
-        else:
-            raise NamespaceNotLoadedException("Please select a namespace")
-
     def persist_configuration(self, namespace, config_name) -> None:
         self.namespace_config = self.configurations[namespace]
         path = "{}/{}".format(namespace, config_name)
@@ -160,9 +157,11 @@ class EtcdBackend(AbstractBackend):
                 "Namespace {} is not loaded, Load namespace with obj.use_namespace({})".format(namespace, namespace)
             )
         self.namespace_config = self.configurations[namespace]
-        if self.etcd_client.get(namespace) != 1:
-            self.etcd_client.set(namespace, "null")
+        if self.etcd_client.get(namespace) != 1 and (namespace not in self.namespaces["all_namespaces"]):
+            self.create_namespace(namespace)
+        else:
+            print("Testing")
 
         self.use_namespace(namespace)
-        for nsp_config_name in self.namespace_configs.keys():
+        for nsp_config_name in self.namespace_config.keys():
             self.persist_configuration(namespace, nsp_config_name)
