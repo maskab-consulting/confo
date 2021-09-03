@@ -12,6 +12,8 @@ from typing import Type
 import consul
 import consulate
 import consul_kv
+
+
 from .AbstractBackend import AbstractBackend
 from json.decoder import JSONDecodeError
 from ..Exceptions import *
@@ -29,45 +31,57 @@ class ConsulBackend(AbstractBackend):
         self.namespace_config = {}
         self.cons_user = None
         self.cons_password = None
-        self.DEFAULT_ENDPOINT = None
-        self.DEFAULT_KV_ENDPOINT = None
-        self.DEFAULT_TXN_ENDPOINT = None
+        # self.DEFAULT_ENDPOINT = None
+        # self.DEFAULT_KV_ENDPOINT = None
+        # self.DEFAULT_TXN_ENDPOINT = None
         self.DEFAULT_PORT = None
         self.DEFAULT_HOST = None
         self.DEFAULT_ADDRESS = None
-        self.DEFAULT_TOKEN = None
+        self.DEFAULT_SCHEME = None
+        # self.DEFAULT_TOKEN = None
         self.API_VERSION = None
         # self.DEFAULT_REQUEST_TIMEOUT = socket._GLOBAL_DEFAULT_TIMEOUT
         self.cons_client = None
         self.namespace_name = '*'
         self.main_namespace = "/confo/"
         self.namespaces = {"all_namespaces": [], "current_namespace": ""}
-        self.curr_namespace = None
+        # self.curr_namespace = None
 
     def load_credentials(self, credentials):
         self.parse_credentials(credentials)
         if (self.cons_user is None) and (self.cons_password is None):
-            self.cons_client = consul.Consul(host=self.DEFAULT_HOST, port=self.DEFAULT_PORT)
+            self.cons_client = consul.Consul(host=self.DEFAULT_HOST,        # creating consul client
+                                             port=self.DEFAULT_PORT
+                                             # address=self.DEFAULT_ADDRESS,
+                                             # scheme=self.DEFAULT_SCHEME,
+                                             # version=self.API_VERSION)
+                                             )
         else:
             raise ClientError("Unable to start client")
 
-        self.namespaces["all_namespaces"] = self.get_children()
+        self.namespaces["all_namespaces"] = self.get_children(self.cons_client)
+        # saving children of client into namespaces dictionary
 
     def use_namespace(self, system_name):
-        namespace = self.main_namespace + system_name
-        if namespace in self.get_namespaces():
-            self.curr_namespace = namespace
+        namespace = self.main_namespace + system_name  # /confo/*
+        if namespace in self.get_namespaces()["all_namespaces"]:  # if /confo/* is in list of all namespaces
+            self.namespaces["curr_namespace"] = namespace  # place */confo/* as a current namespace
+            self.configurations[namespace] = {}
         else:
             return {'message': "Namespace '{}' not found".format(system_name)}
 
     def get_namespaces(self):
-        return self.namespaces
+        return self.namespaces  # Return namespaces
 
     def create_namespace(self, namespace):
-        root = self.main_namespace + namespace
-        self.cons_client.set(root, "null")
+        c = consul.Consul(host=self.DEFAULT_HOST, port=self.DEFAULT_PORT)
+        c.kv.put(self.main_namespace + namespace, self.main_namespace + namespace)
+        self.configurations[self.main_namespace + namespace] = {}
+        self.namespaces["all_namespaces"] = self.get_children(c.return_all())
+        """root = self.main_namespace + namespace  # root is /confo/*
+        self.cons_client.kv.put(root, "null")
         self.configurations[root] = {}
-        self.namespaces["all_namespaces"] = self.cons_client.get(key='', recurse=True)
+        self.namespaces["all_namespaces"] = self.cons_client.get(key='', recurse=True)"""
 
     def get_all(self):
         if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
@@ -93,13 +107,14 @@ class ConsulBackend(AbstractBackend):
             self.persist_configuration(namespace, config)
 
     def get_count(self):
-        return super().get_count()
+        return len(self.get_children(self.cons_client.return_all()))
+        # get children from
 
     def reload(self):
         return super().reload()
 
     def parse_credentials(self, credentials):
-        if 'default_endpoint' in credentials.keys():
+        """if 'default_endpoint' in credentials.keys():
             self.DEFAULT_ENDPOINT = credentials['default_endpoint']
         else:
             raise NotFound("Please set 'default_endpoint' in credentials")
@@ -114,11 +129,11 @@ class ConsulBackend(AbstractBackend):
         else:
             raise NotFound("Please set 'default_txn_endpoint' in credentials")
 
-        if 'api_version' in credentials.keys():
-            self.API_VERSION = credentials['api_version']
+        if 'default_token' in credentials.keys():
+            self.DEFAULT_TOKEN = credentials['default_token']
         else:
-            raise ConsulException("Please set 'api_version' in credentials")
-
+            raise ConsulException("Please set 'default_port' in credentials")"""
+        # print(credentials)
         if 'default_host' in credentials.keys():
             self.DEFAULT_HOST = credentials['default_host']
         else:
@@ -129,18 +144,27 @@ class ConsulBackend(AbstractBackend):
         else:
             raise NotFound("Please set 'default_port' in credentials")
 
-        if 'default_add' in credentials.keys():
+        """if 'default_add' in credentials.keys():
             self.DEFAULT_ADDRESS = credentials['default_add']
         else:
-            raise NotFound("Please set 'default_port' in credentials")
+            raise NotFound("Please set 'default_add' in credentials")"""
 
-        if 'default_token' in credentials.keys():
-            self.DEFAULT_TOKEN = credentials['default_token']
+        if 'api_version' in credentials.keys():
+            self.API_VERSION = credentials['api_version']
         else:
-            raise ConsulException("Please set 'default_port' in credentials")
+            raise ConsulException("Please set 'api_version' in credentials")
 
-    def get_children(self):
-        return [namespace.decode('utf-8') for namespace in self.cons_client.keys("*{}*".format(self.main_namespace))]
+        if 'default_scheme' in credentials.keys():
+            self.DEFAULT_SCHEME = credentials['default_scheme']
+        else:
+            raise ConsulException("Please set 'default_scheme' in credentials")
+
+    def get_children(self, client):
+        children = []
+        x, y = client.kv.get(key='', recurse=True)
+        for key in y:
+            children.append(key["Key"])
+        return children
 
     def return_all(self):
         if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
