@@ -601,6 +601,16 @@ $ src/redis-server
 ```
 <p>2.6 Database Backend</p>
 
+<p>Key-value databases use compact, efficient index structures to be able to quickly and reliably locate a value by its key, making them ideal for systems that need to be able to find and retrieve data in constant time. Redis, for instance, is a key-value database that is optimized for tracking relatively simple data structures (primitive types, lists, heaps, and maps) in a persistent database. By only supporting a limited number of value types, Redis is able to expose an extremely simple interface to querying and manipulating them, and when configured optimally is capable of extremely high throughput.</p>
+
+<p><b>Features of a key-value database</b> </p>
+
+<p> A key-value database is defined by the fact that it allows programs or users of programs to retrieve data by keys, which are essentially names, or identifiers, that point to some stored value. Because key-value databases are defined so simply, but can be extended and optimized in numerous ways, there is no global list of features, but there are a few common ones:</p>
+
+<li>Retrieving a value (if there is one) stored and associated with a given key</li>
+<li>Deleting the value (if there is one) stored and associated with a given key</li>
+<li>Setting, updating, and replacing the value (if there is one) associated with a given key</li>
+
 <p> 2.7 Elastic Search Backend</p>
 <p>Elasticsearch is the distributed search and analytics engine at the heart of the Elastic Stack. Logstash and Beats facilitate collecting, aggregating, and enriching your data and storing it in Elasticsearch. Kibana enables you to interactively explore, visualize, and share insights into your data and manage and monitor the stack. Elasticsearch is where the indexing, search, and analysis magic happens.</p>
 
