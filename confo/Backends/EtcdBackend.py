@@ -71,7 +71,7 @@ class EtcdBackend(AbstractBackend):
         :return:
         """
 
-        self.etcd_client.put(self.main_namespace + namespace, self.main_namespace + namespace)
+        self.etcd_client.put(self.main_namespace + namespace, "")
         self.configurations[self.main_namespace + namespace] = {}
         self.namespaces["all_namespaces"] = self.get_children(self.etcd_client.get_all())
 
@@ -94,25 +94,32 @@ class EtcdBackend(AbstractBackend):
         else:
             print("Namespace: " + namespace + " does not exist")
 
+    def config_keys(self, myclient):
+        v = []
+        for x in myclient:
+            _, y = x
+            key = y.key.decode("utf-8")
+            if len(str(key).split("/")) == 4:
+                v.append(y.key.decode("utf-8"))
+        return v
+
     def reload(self):
-       # self.configurations[self.get_current_namespace()] = {}
-        configs = self.configurations[self.get_current_namespace()]
+        """
+        It helps to reload configurations from etcd client into a new Confo object
+        :return:
+        """
+
+        configs = self.config_keys(self.etcd_client.get_all())  # /confo/database/{configname}*
+
         print(configs)
-        for config in configs:
-            path = self.get_current_namespace() + "/" + config
-            print(path)
-            return
-            print(self.get_children(path))
-            data, stat = self.etcd_client.get(path)
-            print(data)
-            print(stat)
-            return
-            if data.decode('utf-8').strip() == '':
-                data = "{}"
+        for configkey in configs:
+            data,_ = self.etcd_client.get(configkey)
+            configname = str(configkey).split("/").pop()
+
             try:
-                self.configurations[self.get_current_namespace()][config] = json.loads(data)
+                self.configurations[self.get_current_namespace()][configname] = json.loads(data)
             except ValueError as e:
-                self.configurations[self.get_current_namespace()][config] = json.loads("{}")
+                self.configurations[self.get_current_namespace()][configname] = json.loads("{}")
 
     def get_namespaces(self):
         """
@@ -212,8 +219,10 @@ class EtcdBackend(AbstractBackend):
         """
         v = []
         for x in myclient:
-            y, _ = x
-            v.append(y.decode('utf-8'))
+            _, y = x
+            key = y.key.decode("utf-8")
+            if len(str(key).split("/")) == 3:
+                v.append(y.key.decode("utf-8"))
         return v
 
     def persist_configuration(self, namespace, config_name):
@@ -274,5 +283,5 @@ class EtcdBackend(AbstractBackend):
             print("persist_namespace() not working")
 
         self.use_namespace(namespace)
-        for namesapce_config_name in self.namespace_config.keys():
-            self.persist_configuration(namespace, namesapce_config_name)
+        for namespace_config_name in self.namespace_config.keys():
+            self.persist_configuration(namespace, namespace_config_name)
