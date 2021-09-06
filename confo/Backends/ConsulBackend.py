@@ -51,15 +51,12 @@ class ConsulBackend(AbstractBackend):
         self.main_namespace = "confo/"
         self.current_namespace = None
         self.namespaces: dict = {"all_namespaces": []}
-        # self.namespaces: dict = {"all_namespaces": [], "current_namespace": ""}
 
     def load_credentials(self, credentials):  # WORKS
         """
-
+        Load credentials to connect to consul client. Parameter is a dictionary of credentials
         :param credentials:
         :return:
-
-        Load credentials to connect to consul client. Parameter is a dictionary of credentials
         """
         self.parse_credentials(credentials)
         if (self.cons_user is None) and (self.cons_password is None):
@@ -73,8 +70,9 @@ class ConsulBackend(AbstractBackend):
 
     def use_namespace(self, system_name: str):  # WORKS
         """
-        :argument system_name of type string
         For activating the namespace you want to use
+        :param system_name:
+        :return:
         """
         if system_name.startswith(self.main_namespace):  # check if system name starts with "confo/"
             namespace = system_name  # if true, then the namespace is in the system
@@ -88,15 +86,15 @@ class ConsulBackend(AbstractBackend):
 
     def get_namespaces(self) -> dict:  # WORKS
         """
-        :argument
-        Returns dictionary of all the namespaces
+        :return: dictionary of all the namespaces
         """
         return self.namespaces  # Return namespaces
 
     def create_namespace(self, namespace) -> None:  # WORKS
         """
-        :argument namespace:
         Create a namespace for the configurations
+        :param namespace:
+        :return:
         """
         print(self.main_namespace + namespace)  # /confo/consul - for debug
         print(self.main_namespace)  # /confo/ - for debug
@@ -104,15 +102,24 @@ class ConsulBackend(AbstractBackend):
         self.cons_client.kv.put(self.main_namespace + namespace, self.main_namespace + namespace)  # Putting Key & Value
         self.configurations[self.main_namespace + namespace] = {}  # Entry of namespace in configurations
         self.namespaces["all_namespaces"] = self.get_children(self.cons_client)  # Update list of namespaces
-        print(self.namespaces["all_namespaces"]) # - for debug
+        print(self.namespaces["all_namespaces"])  # - for debug
 
-    def get_all(self) -> dict:
+    def get_all(self) -> dict:  # WORKS
+        """
+        NamespaceNotLoadedException raised when namespace does not exist or is not activated
+        :return: all configurations of the activated namespace - dictionary related to the current activated namespace
+        """
         if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
             return self.configurations[self.find_curr_namespace()]
         else:
             raise NamespaceNotLoadedException("Namespace not loaded")
 
-    def get(self, name, field=None):
+    def get(self, name, field=None):  # WORKS
+        """
+        :param name:
+        :param field:
+        :return:
+        """
         if field is not None:
             try:
                 return self.configurations[self.find_curr_namespace()][name][field]
@@ -124,7 +131,13 @@ class ConsulBackend(AbstractBackend):
             except:
                 print("Config '{}' is not set".format(name))
 
-    def set(self, config, field, value):
+    def set(self, config, field, value):  # WORKS
+        """
+        :param config:
+        :param field:
+        :param value:
+        :return:
+        """
         if type(field) == str:
             try:
                 self.configurations[self.find_curr_namespace()][config][field] = value
@@ -137,17 +150,22 @@ class ConsulBackend(AbstractBackend):
             except:
                 pass
 
-
-    def get_count(self) -> int:
+    def get_count(self) -> int:  # WORKS
+        """
+        :return: count of configurations in the activated namespace
+        """
         return len(self.return_all())
-        # return len(self.get_children(self.cons_client.return_all()))
-        # get children from
 
     def reload(self):
         return super().reload()
 
-    def parse_credentials(self, credentials):
-        # print(credentials)
+    def parse_credentials(self, credentials):  # WORKS
+        """
+        Assign variables to values that are used to connect to the Consul client.
+        :raises NotFound if host and port credentials are not defined & ConsulException if API version is not defined
+        :param credentials:
+        :return:
+        """
         if 'default_host' in credentials.keys():
             self.DEFAULT_HOST = credentials['default_host']
         else:
@@ -168,23 +186,41 @@ class ConsulBackend(AbstractBackend):
         else:
             raise ConsulException("Please set 'default_scheme' in credentials")
 
-    def get_children(self, client):
+    def get_children(self, client):  # WORKS
+        """
+        :param client:
+        :return: list of of namespaces - returns all namespaces save in the Consul Cache
+        """
         children = []
         x, y = client.kv.get(key='', recurse=True)
         for key in y:
             children.append(key["Key"])
         return children
 
-    def return_all(self):
+    def return_all(self):  # WORKS
+        """
+        NamespaceNotLoadedException raised when namespace does not exist or is not activated
+        :return: all configurations of the activated namespace - dictionary related to the current activated namespace
+        """
         if self.find_curr_namespace() in self.namespaces["all_namespaces"]:
             return self.configurations[self.find_curr_namespace()]
         else:
             raise NamespaceNotLoadedException("Namespace Not Found")
 
-    def find_curr_namespace(self) -> str:
+    def find_curr_namespace(self) -> str:  # WORKS
+        """
+        current working namespace as a string
+        :return:
+        """
         return self.namespaces["current_namespace"]
 
     def persist(self, namespace, config):
+        """
+        Saves all configurations to consul cache
+        :param namespace:
+        :param config:
+        :return:
+        """
         if not namespace:
             # Persist everything
             self.persist_everything()
@@ -196,17 +232,27 @@ class ConsulBackend(AbstractBackend):
             self.persist_configuration(namespace, config)
 
     def persist_everything(self) -> None:
+        """
+        loops through all namespaces and persist all namespaces in the list of namespaces
+        :return:
+        """
         for namespace in self.namespaces["all_namespaces"]:
             self.persist_namespace(namespace)
 
     def persist_namespace(self, namespace) -> None:
+        """
+        In a namespace, we persist each configuration
+        :param namespace:
+        :raises NamespaceNotLoadedException - when namespace is not found in namespace list
+        :return:
+        """
         recover_namespace = self.namespace_name
         if namespace not in self.configurations.keys():
             raise NamespaceNotLoadedException(
                 "Namespace " + namespace + " not loaded. Load namespace with obj.use_namespace(" + namespace + ")")
 
         self.namespace_config = self.configurations[namespace]
-        if self.cons_client.exists(self.main_namespace + "/" + namespace):
+        if self.cons_client.get(self.main_namespace + "/" + namespace):
             pass
         else:
             self.cons_client.ensure_path(self.main_namespace + "/" + namespace)
@@ -217,6 +263,12 @@ class ConsulBackend(AbstractBackend):
         self.use_namespace(recover_namespace)
 
     def persist_configuration(self, namespace, configuration) -> None:
+        """
+        Extracts configurations of a specified namespace and saves them in consul cache
+        :param namespace:
+        :param configuration:
+        :return:
+        """
         self.namespace_config = self.configurations[namespace]
         path = self.main_namespace + "/" + namespace + "/" + configuration
         self.cons_client.ensure_path(path)
