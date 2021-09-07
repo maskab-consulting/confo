@@ -44,7 +44,6 @@ class Confo:
     def get_backends(self):
         return {"all_backends": list(self.backends.keys()), "active_backend": self.active_backend_name}
 
-
     def activate_backend(self, backend_name):
         if backend_name in self.get_backends()["all_backends"]:
             if self.active_backend != None:

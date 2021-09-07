@@ -116,6 +116,7 @@ class ConsulBackend(AbstractBackend):
 
     def get(self, name, field=None):  # WORKS
         """
+        Gets configuration of namespaces in use, and prints
         :param name:
         :param field:
         :return:
@@ -133,6 +134,7 @@ class ConsulBackend(AbstractBackend):
 
     def set(self, config, field, value):  # WORKS
         """
+        Creates new configuration in the current namespace
         :param config:
         :param field:
         :param value:
@@ -155,9 +157,6 @@ class ConsulBackend(AbstractBackend):
         :return: count of configurations in the activated namespace
         """
         return len(self.return_all())
-
-    def reload(self):
-        return super().reload()
 
     def parse_credentials(self, credentials):  # WORKS
         """
@@ -186,7 +185,7 @@ class ConsulBackend(AbstractBackend):
         else:
             raise ConsulException("Please set 'default_scheme' in credentials")
 
-    def get_children(self, client):  # WORKS
+    def get_children(self, client) -> list:  # WORKS
         """
         :param client:
         :return: list of of namespaces - returns all namespaces save in the Consul Cache
@@ -194,7 +193,9 @@ class ConsulBackend(AbstractBackend):
         children = []
         x, y = client.kv.get(key='', recurse=True)
         for key in y:
-            children.append(key["Key"])
+            k = key["Key"]
+            if len(str(k).split("/")) == 2:  # confo/redis/sql - config  confo/redis - namespace
+                children.append(key["Key"])
         return children
 
     def return_all(self):  # WORKS
@@ -207,14 +208,42 @@ class ConsulBackend(AbstractBackend):
         else:
             raise NamespaceNotLoadedException("Namespace Not Found")
 
-    def find_curr_namespace(self) -> str:  # WORKS
+    def find_curr_namespace(self):  # WORKS
         """
         current working namespace as a string
         :return:
         """
         return self.namespaces["current_namespace"]
 
-    def persist(self, namespace, config):
+    def get_config_keys(self, client):
+        """
+        Finds and returns configuration keys
+        :param client:
+        :return:
+        """
+        children = []
+        x, y = client.kv.get(key='', recurse=True)
+        for key in y:
+            k = key["Key"]
+            if len(str(k).split("/")) == 3:  # confo/redis/sql - config  confo/redis - namespace
+                children.append(key["Key"])
+        return children
+
+    def reload(self):
+        """
+        Reloads configurations from consul client into a new confo object
+        :return:
+        """
+        config = self.get_config_keys(self.cons_client)
+        for k in config:
+            x, y = self.cons_client.kv.get(k)
+            config_name = str(k).split("/").pop()
+            try:
+                self.configurations[self.find_curr_namespace()][config_name] = json.loads(x)
+            except ValueError as e:
+                self.configurations[self.find_curr_namespace()][config_name] = json.loads("{}")
+
+    def persist(self, namespace, config):  # WORKS
         """
         Saves all configurations to consul cache
         :param namespace:
@@ -252,10 +281,10 @@ class ConsulBackend(AbstractBackend):
                 "Namespace " + namespace + " not loaded. Load namespace with obj.use_namespace(" + namespace + ")")
 
         self.namespace_config = self.configurations[namespace]
-        if self.cons_client.get(self.main_namespace + "/" + namespace):
+        if self.cons_client.kv.get(self.main_namespace + "/" + namespace):
             pass
         else:
-            self.cons_client.ensure_path(self.main_namespace + "/" + namespace)
+            self.cons_client.kv.put(self.main_namespace + "/" + namespace, self.main_namespace + "/" + namespace)
 
         self.use_namespace(namespace)
         for configuration in self.namespace_config:
@@ -270,7 +299,6 @@ class ConsulBackend(AbstractBackend):
         :return:
         """
         self.namespace_config = self.configurations[namespace]
-        path = self.main_namespace + "/" + namespace + "/" + configuration
-        self.cons_client.ensure_path(path)
+        path = namespace + "/" + configuration
         data = self.namespace_config[configuration]
-        self.cons_client.set(path, str.encode(json.dumps(data)))
+        self.cons_client.kv.put(path, str.encode(json.dumps(data)))
