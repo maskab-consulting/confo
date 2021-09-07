@@ -28,7 +28,7 @@ pip install confo
 
 Confo currently supports two backends, a `filesystem` backend and a `ZooKeeper` backend.
 
-2.1 Filesystem backend
+2.1 <a href="docs/backends/filesystem_backend.md">Filesystem backend</a>
 
 The filesystem backend simply works by reading json files from the filesystem. An example configuration can be setup like below. Imagine you have a 
 sales database with credentials you want to expose to your application, and you want to use a sales forecasting model which is exposed via REST api.
@@ -84,7 +84,7 @@ config.load_backend(credentials=cred,name="example_backend",backend_type=BE.FILE
 The `Confo.load_backend(credentials,name,backend_type)` method is used to create a backend management object.The credentials differ by backend type 
 The filesystem backend accepts a dictionary of credentials which contains the `config_path` key, this is 
 the path where the configurations are stored.
-#### backed operations 
+#### backend operations 
 
 To list all backends loaded 
 ```python
@@ -342,7 +342,8 @@ config.persist(namespace="sales",config="sale_report")
 ```
 The above code will persist the `sale_report` configuration only.If the configuration file already exists i will be updated.
 
-2.2 ZooKeeper backend 
+2.2 <a href="docs/backends/zookeeper_backend.md">Zookeeper Backend</a>
+
 
 Lets assume our application is operating a very distributed environments. One of the main problems in distributed systems
 is finding one source of truth for application state and configuration.ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
@@ -481,7 +482,9 @@ mail_recipients(engine,email_config)
 
 The script above shows a simple use case for a robust configuration manager.
 
-<p> 2.3 Etcd Backend</p>
+2.3 <a href="docs/backends/etcd_backend.md">Etcd Backend</a>
+ 
+
 <p>Etcd is an open-source key value data store, used to manage and store data that help keep distributed
 systems running. Etcd is most well known for being one of the core components of Kubernetes, where it
 stores and manages Kubernetes state data, configuration data and metadata. Etcd can be relied upon to
@@ -531,7 +534,9 @@ $ export PATH="$PATH:`pwd`/bin"
 $ etcd --version
 
 ```
-<p> 2.4 Consul Backend </p>
+2.4 <a href="docs/backends/consul_backend.md">Consul Backend</a>
+
+
 <p> Consul is a service mesh solution providing a full featured control plane with service discovery, configuration, and segmentation functionality. Each of these features can be used individually as needed, or they can be used together to build a full service mesh. Consul requires a data plane and supports both a proxy and native integration model. Consul ships with a simple built-in proxy so that everything works out of the box, but also supports 3rd party proxy integrations such as Envoy.</p>
 
 <p>1.<b> Download and install consul from precompiled binaries:</b></p>
@@ -578,7 +583,9 @@ consul -v
 
 ```
 
-<p> 2.5 Redis Backend </p>
+2.5 <a href="docs/backends/redis_backend.md">Redis Backend</a>
+
+
 <p> Redis is an open source (BSD licensed), in-memory <b>data structure store </b>, used as a database, cache, and message broker. Redis provides data structures such as <a href="https://redis.io/topics/data-types-intro#strings"> strings </a>, <a href="https://redis.io/topics/data-types-intro#hashes"> hashes </a>, <a href="https://redis.io/topics/data-types-intro#lists"> lists </a>, <a href="https://redis.io/topics/data-types-intro#sets"> sets </a>, <a href="https://redis.io/topics/data-types-intro#sorted-sets"> sorted sets </a> with range queries, <a href="https://redis.io/topics/data-types-intro#bitmaps">bitmaps</a>,<a href="https://redis.io/topics/data-types-intro#hyperloglogs"> hyperloglogs </a>, <a href="https://redis.io/commands/geoadd">geospatial indexes</a>, and <a href="https://redis.io/topics/streams-intro">streams</a>. Redis has built-in replication, Lua scripting, LRU eviction, transactions, and different levels of on-disk persistence, and provides high availability via Redis Sentinel and automatic partitioning with Redis Cluster.</p>
 
 <b> Installing Redis</b>
@@ -599,7 +606,8 @@ $ make
 $ src/redis-server
 
 ```
-<p>2.6 Database Backend</p>
+2.6 <a href="docs/backends/database_backend.md">Database Backend</a>
+
 
 <p>Key-value databases use compact, efficient index structures to be able to quickly and reliably locate a value by its key, making them ideal for systems that need to be able to find and retrieve data in constant time. Redis, for instance, is a key-value database that is optimized for tracking relatively simple data structures (primitive types, lists, heaps, and maps) in a persistent database. By only supporting a limited number of value types, Redis is able to expose an extremely simple interface to querying and manipulating them, and when configured optimally is capable of extremely high throughput.</p>
 
@@ -611,7 +619,9 @@ $ src/redis-server
 <li>Deleting the value (if there is one) stored and associated with a given key</li>
 <li>Setting, updating, and replacing the value (if there is one) associated with a given key</li><br>
 
-<p> 2.7 Elastic Search Backend</p>
+2.7 <a href="docs/backends/elasticsearch_backend.md">Elastic Search Backend</a>
+
+
 <p>Elasticsearch is the distributed search and analytics engine at the heart of the Elastic Stack. Logstash and Beats facilitate collecting, aggregating, and enriching your data and storing it in Elasticsearch. Kibana enables you to interactively explore, visualize, and share insights into your data and manage and monitor the stack. Elasticsearch is where the indexing, search, and analysis magic happens.</p>
 
 <p> 1. <b>Download and install archive from linux</b></p>
