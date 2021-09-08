@@ -23,7 +23,7 @@ best suited for micro-service and distributed systems development.
 pip install confo
 
 ```
-
+<br>
 2. Setup Backends 
 
 Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` backend,  `Etcd` backend,  `Consul` backend,  `Redis` backend, 
@@ -47,16 +47,19 @@ Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` b
 
 3.1 <a href="docs/operations/backend operations">Backend Operations</a>
 
-3.3.1 <a href="docs/operations/backend operations/filesystem_backend.md">Filesystems Backend</a>
-3.3.1 <a href="docs/operations/backend operations/zookeeper_backend.md">Zookeeper Backend</a>
-3.3.1 <a href="docs/operations/backend operations/etcd_backend.md">Etcd Backend</a>
-3.3.1 <a href="docs/operations/backend operations/consul_backend.md">Consul Backend</a>
-3.3.1 <a href="docs/operations/backend operations/redis_backend.md">Redis Backend</a>
-3.3.1 <a href="docs/operations/backend operations/database_backend.md">Database Backend</a>
-3.3.1 <a href="docs/operations/backend operations/elasticsearch_backend.md">Elastic Search Backend</a>
+3.2 <a href="docs/operations/namespace operations">Namespace Operations</a>
 
-3.2 <a href="docs/operations/backend operations">Namespace Operations</a>
+3.3 <a href="docs/operations/configuration level operations">Configuration Level Operations</a><br><br>
 
-3.3 <a href="docs/operations/backend operations">Configuration Level Operations</a><br>
+4. Setup Persistance
+
+4.1 <a href="docs/persistance/backend level">Backend Level</a>
+
+4.2 <a href="docs/persistance/namespace level">Namespace Level</a>
+
+4.3 <a href="docs/persistance/configuration level">Configuration Level</a>
+
+
+
 
 
