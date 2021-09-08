@@ -24,7 +24,7 @@ pip install confo
 
 ```
 <br>
-2. Setup Backends 
+2. Setup Backends<br>
 
 Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` backend,  `Etcd` backend,  `Consul` backend,  `Redis` backend, 
  `Database` backend and  `Elastic Search` backend
