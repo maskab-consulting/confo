@@ -24,26 +24,39 @@ pip install confo
 
 ```
 
-2.Setup Backends 
+2. Setup Backends 
 
-Confo currently supports seven backends, a `filesystem` backend and a `ZooKeeper` backend.
+Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` backend,  `Etcd` backend,  `Consul` backend,  `Redis` backend, 
+ `Database` backend and  `Elastic Search` backend
 
 2.1 <a href="docs/backends/filesystem_backend.md">Filesystem backend</a>
 
 2.2 <a href="docs/backends/zookeeper_backend.md">Zookeeper Backend</a>
 
-
 2.3 <a href="docs/backends/etcd_backend.md">Etcd Backend</a>
-
 
 2.4 <a href="docs/backends/consul_backend.md">Consul Backend</a>
 
-
 2.5 <a href="docs/backends/redis_backend.md">Redis Backend</a>
-
 
 2.6 <a href="docs/backends/database_backend.md">Database Backend</a>
 
+2.7 <a href="docs/backends/elasticsearch_backend.md">Elastic Search Backend</a><br><br>
 
-2.7 <a href="docs/backends/elasticsearch_backend.md">Elastic Search Backend</a>
+3. Setup Operations
+
+3.1 <a href="docs/operations/backend operations">Backend Operations</a>
+
+3.3.1 <a href="docs/operations/backend operations/filesystem_backend.md">Filesystems Backend</a>
+3.3.1 <a href="docs/operations/backend operations/zookeeper_backend.md">Zookeeper Backend</a>
+3.3.1 <a href="docs/operations/backend operations/etcd_backend.md">Etcd Backend</a>
+3.3.1 <a href="docs/operations/backend operations/consul_backend.md">Consul Backend</a>
+3.3.1 <a href="docs/operations/backend operations/redis_backend.md">Redis Backend</a>
+3.3.1 <a href="docs/operations/backend operations/database_backend.md">Database Backend</a>
+3.3.1 <a href="docs/operations/backend operations/elasticsearch_backend.md">Elastic Search Backend</a>
+
+3.2 <a href="docs/operations/backend operations">Namespace Operations</a>
+
+3.3 <a href="docs/operations/backend operations">Configuration Level Operations</a><br>
+
 
