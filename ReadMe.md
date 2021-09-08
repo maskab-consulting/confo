@@ -43,7 +43,7 @@ Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` b
 
 2.7 <a href="docs/backends/elasticsearch_backend.md">Elastic Search Backend</a><br><br>
 
-3. Setup Operations
+3.Setup Operations
 
 3.1 <a href="docs/operations/backend operations">Backend Operations</a>
 
@@ -51,7 +51,7 @@ Confo currently supports seven backends, a `filesystem` backend, a `ZooKeeper` b
 
 3.3 <a href="docs/operations/configuration level operations">Configuration Level Operations</a><br><br>
 
-4. Setup Persistance
+4.Setup Persistance
 
 4.1 <a href="docs/persistance/backend level">Backend Level</a>
 
