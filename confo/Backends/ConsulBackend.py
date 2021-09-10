@@ -96,13 +96,9 @@ class ConsulBackend(AbstractBackend):
         :param namespace:
         :return:
         """
-        print(self.main_namespace + namespace)  # /confo/consul - for debug
-        print(self.main_namespace)  # /confo/ - for debug
-        print(namespace)  # consul - for debug
         self.cons_client.kv.put(self.main_namespace + namespace, self.main_namespace + namespace)  # Putting Key & Value
         self.configurations[self.main_namespace + namespace] = {}  # Entry of namespace in configurations
         self.namespaces["all_namespaces"] = self.get_children(self.cons_client)  # Update list of namespaces
-        print(self.namespaces["all_namespaces"])  # - for debug
 
     def get_all(self) -> dict:  # WORKS
         """
@@ -192,6 +188,8 @@ class ConsulBackend(AbstractBackend):
         """
         children = []
         x, y = client.kv.get(key='', recurse=True)
+        if y is None:
+            return []
         for key in y:
             k = key["Key"]
             if len(str(k).split("/")) == 2:  # confo/redis/sql - config  confo/redis - namespace
@@ -275,7 +273,6 @@ class ConsulBackend(AbstractBackend):
         :raises NamespaceNotLoadedException - when namespace is not found in namespace list
         :return:
         """
-        recover_namespace = self.namespace_name
         if namespace not in self.configurations.keys():
             raise NamespaceNotLoadedException(
                 "Namespace " + namespace + " not loaded. Load namespace with obj.use_namespace(" + namespace + ")")
@@ -289,7 +286,7 @@ class ConsulBackend(AbstractBackend):
         self.use_namespace(namespace)
         for configuration in self.namespace_config:
             self.persist_configuration(namespace, configuration)
-        self.use_namespace(recover_namespace)
+        self.use_namespace(namespace)
 
     def persist_configuration(self, namespace, configuration) -> None:
         """
