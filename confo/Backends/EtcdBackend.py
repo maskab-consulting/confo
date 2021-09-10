@@ -108,10 +108,15 @@ class EtcdBackend(AbstractBackend):
         It helps to reload configurations from etcd client into a new Confo object
         :return:
         """
+        if self.get_current_namespace() not in self.get_namespaces()["all_namespaces"]:
+            raise NamespaceNotLoadedException("Namespace : {} does not exist".format(self.get_current_namespace()))
+
+        if len(self.configurations) == 0:
+            self.configurations[self.get_current_namespace()] = {}
 
         configs = self.config_keys(self.etcd_client.get_all())  # /confo/database/{configname}*
 
-        print(configs)
+
         for configkey in configs:
             data,_ = self.etcd_client.get(configkey)
             configname = str(configkey).split("/").pop()
@@ -270,6 +275,7 @@ class EtcdBackend(AbstractBackend):
         :param namespace: holds the namespace that is being used.
         :return:
         """
+
         if namespace not in self.configurations.keys():
             raise NamespaceNotLoadedException(
                 "Namespace {} is not loaded, Load namespace with obj.use_namespace({})".format(namespace, namespace)
