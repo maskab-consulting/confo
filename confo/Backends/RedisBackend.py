@@ -168,6 +168,16 @@ class RedisBackend(AbstractBackend):
             raise NamespaceNotLoadedException("Please select a namespace")
 
     def get(self, name, field=None):
+        """
+        Get configurations from instance
+
+        Args:
+            name ([str]): Name of the configurations
+            field ([str], optional): Field representing the field in the configurations
+
+        Returns:
+            [dict | str]: returns the speciefied value of the name | field
+        """
         if field is not None:
             try:
                 return self.configurations[self.get_current_namespace()][name][field]
@@ -181,7 +191,7 @@ class RedisBackend(AbstractBackend):
 
     def set(self, config, field, value):
         """
-
+        Set configurations into the instace
 
         Args:
             config ([str]): Name of the Configuration 
@@ -196,7 +206,7 @@ class RedisBackend(AbstractBackend):
                 self.configurations[self.get_current_namespace()][config][field] = value
         elif (type(field) == dict or type(field) == list) and value == None:
             try:
-                self.configurations[self.get_current_namespace()][config] = field
+                self.configurations[self.get_current_namespace()][config] = field # {kjf: jkfd}
             except:
                 print("hello world")
 
@@ -208,6 +218,12 @@ class RedisBackend(AbstractBackend):
             int: count of configurations
         """
         return len(self.get_all())
+
+    def load_namespaces(self):
+
+        if len(self.get_children()) > 0 and len(self.configurations.keys()) != 0:
+            for namespace in self.get_children():
+                self.configurations[namespace] = {}
 
     def reload(self):
         """
