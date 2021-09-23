@@ -17,6 +17,8 @@
 ##### Configuration Level 
 
 ```python
-config.persist(namespace="sales",config="sale_report")
+config.persist(namespace="database", config="mysql")
+config.persist(namespace="database", config="postgres")
 ```
-The above code will persist the `sale_report` configuration only.If the configuration file already exists i will be updated.
+The above code will persist the `mysql` and `postgres` configuration only.If the configuration file already exists it will be updated.
+

@@ -19,98 +19,50 @@
 lets get all configurations in the current namespace
 
 ```python
+# Define configurations 
+
+postgress = {'driver': 'postgress',
+            'host': '127.0.0.1',
+             'port':5678,
+            }
+
+# Save configuration 
+config.set("postgress", postgress,None)
+```
+Above we set our first configuration to connect to a postgres database.
+
+```python
+# Define another configurations 
+mysql = {'driver': 'mysql',
+        'host': 'localhost',
+          'port':1234,
+        }
+# Save configuration 
+config.set("mysql", mysql,None)
+```
+Since `Confo` is designed to store different types of configurations, above we set our second configurations that connects to mysql database.
+
+```python
+# Get only the host
+print(config.get("mysql","host"))
+
+#RESULTS
+
+localhost
+```
+
+Since we have set 2 different configurations, we can now get a single key of each configuration by specifying the name of the configuration and the key in the configuration.
+
+```python
+# Returns all the configurations
 print(config.get_all())
 
-#RESULTS: 
-{'database': {'host': '127.0.0.1',
-              'port': 5432,
-              'username': 'kabelo',
-              'password': 'confoRocks'}}
+#RESULTS
+
+{
+    'postgress': {'driver': 'postgress', 'host': '127.0.0.1', 'port': 5678}, 
+    'mysql': {'driver': 'mysql', 'host': '1123356', 'port': 1234}
+ }
 ```
 
-The sales department is exposing daily sales reports through a REST API, the report is read a json data 
-which will be used by our application to build visualization. Lets create a new configuration programmatically, 
-and store the credentials to this API. 
-
-```python
-
-config.set("sale_report","host","10.222.194.146")
-config.set("sale_report","port","2389")
-config.set("sale_report","token","01e947b6-8914-11eb-8dcd-0242ac130003")
-config.set("sale_report","host","78f45902-c9b8-4151-b924734+18080f28-8914-11eb-8dcd-0242ac133")
-
-#OR 
-
-sales_report_data = {
-    "host":"10.222.194.146",
-    "port":"2389",
-    "token":"01e947b6-8914-11eb-8dcd-0242ac130003",
-    "secret":"78f45902-c9b8-4151-b924734+18080f28-8914-11eb-8dcd-0242ac133"
-}
-config.set("sale_report",sales_report_data,None)
-
-```
-
-The `Confo.set(config,field,value)` method creates a new configuration in the current namespace. This method 
-can be used this way `Confo.set(config,field,value)`  or `Confo.set(config,dictionary,None)`, by replacing the value of `field` with a dictionary or list and replacing the last argument with None we can overload the default behaviour 
-and set the configuration values directly. 
-
-Now lets check all available configuration in the namespace:
-```python
-print(config.get_all())
-#RESULTS: 
-{'database': {'host': '127.0.0.1',
-              'port': 5432,
-              'username': 'kabelo',
-              'password': 'confoRocks'},
- 'sale_report': {'host': '10.222.194.146',
-                 'port': '2389',
-                 'token': '01e947b6-8914-11eb-8dcd-0242ac130003',
-                 'secret': '78f45902-c9b8-4151-b924734+18080f28-8914-11eb-8dcd-0242ac133'}}
-```
-
-Perfect we can now consume configuration and metadata in a clean and decoupled way.Imagine if you have a 100 configurations and metadata
-in a given namespace,the output dictionary from `Confo.get_all()` can be overwhelming to traverse. Lets find a more efficient way
-
-```python
-#Get the database host 
-print(config.get("database","host"))
-
-#RESULT
-127.0.0.1
-
-#get the database password 
-print(config.get("database","confoRocks"))
-
-#RESULTS:
-confoRocks
-
-#get the entire sale_report configuration
-print(config.get("sale_report"))
-
-#RESULT
-{'host': '10.222.194.146',
- 'port': '2389',
- 'token': '01e947b6-8914-11eb-8dcd-0242ac130003',
- 'secret': '78f45902-c9b8-4151-b924734+18080f28-8914-11eb-8dcd-0242ac133'}
-
-#By ommiting the `field` argument `Confo.get()` returns the whole  configuration 
-
-```
-Lets assume we were able to programmatically retrieve a new secret and token for the sales report API. 
-`Confo` allows us to update the configuration, by using `Confo.set()` to overwrite the old values. 
-
-```python
-new_token = "e9f2b59d-130d-4b61-b20c-94c73496655f"
-new_secret = "cd58cb1d-22fc-4420-b5ab-6b67a565671d7d34f5e4-8916-11eb-8dcd"
-config.set("sale_report","token",new_token)
-config.set("sale_report","secret",new_secret)
-print(config.get("sale_report"))
-
-#RESULTS:
-{'host': '10.222.194.146',
- 'port': '2389',
- 'token': 'e9f2b59d-130d-4b61-b20c-94c73496655f',
- 'secret': 'cd58cb1d-22fc-4420-b5ab-6b67a565671d7d34f5e4-8916-11eb-8dcd'}
-
-```
+Now that we have set multiple configurations, using config.get_all() will return all configurations that we have set.

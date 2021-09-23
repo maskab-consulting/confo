@@ -111,3 +111,4 @@ cr = {"default_host": "127.0.0.1",
       "api_version": 'v1'}
 config.load_backend(credentials=cr, name="ConsulBackend", backend_type=BE.CONSUL_BACKEND)
 ```
+The `Confo.load_backend(credentials,name,backend_type)` method is used to create a backend management object.The credentials differ by backend type.
