@@ -237,7 +237,7 @@ class ConsulBackend(AbstractBackend):
             x, y = self.cons_client.kv.get(k)
             config_name = str(k).split("/").pop()
             try:
-                self.configurations[self.find_curr_namespace()][config_name] = json.loads(x)
+                self.configurations[self.find_curr_namespace()][config_name] = json.loads(y["Value"].decode('utf-8'))
             except ValueError as e:
                 self.configurations[self.find_curr_namespace()][config_name] = json.loads("{}")
 
