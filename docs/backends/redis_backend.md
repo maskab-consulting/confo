@@ -12,3 +12,31 @@
 </p>
 
 ## Redis Backend
+The redis backend simply works by reading data, in this case it will be `configurations` that are saved in the Redis Caching System. Both Saving and Retrieving of these configurations can be done using a `Confo` instance. `Confo` uses namespaces to separate logical groups of configurations. For example everything concerned with systems from the `sales` department can be stored in the `sales` namespace and every configuration concerned with systems from the `analytics team` can be store in a namespace called `analytics`.
+
+The following code snippets will showcase how to use `Confo` utilizing Redis backend.
+
+Start by importing the `Confo` into your project
+```python
+# Import necessary modules
+
+from confo.Confo import Confo
+import confo.Backends as BE
+```
+Create a new `Confo` object `config` and load the credentials of your Redis Server. Provide a name for your backend.
+
+```python
+# Create a confo Instance
+config = Confo()
+
+# define your redis credentials
+cred = {
+        "redis_host":"localhost",
+        "redis_port":"6379"
+       }
+
+# Load the Redis backend, give it a name of your choosing, it has to be unique
+config.load_backend(credentials=cred,name="redis_backend",backend_type=BE.REDIS_BACKEND )
+```
+The `Confo.load_backend(credentials,name,backend_type)` method is used to create a backend management object.The credentials differ by backend type.
+

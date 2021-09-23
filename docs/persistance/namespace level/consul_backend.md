@@ -17,7 +17,7 @@
 ##### Namespace Level
 
 ```python
-config.persist(namespace="sales")
+config.persist(namespace="confo/database")
 ```
 
-The above code will persist every configuration in the `sales` namespace
+The above code will persist every configuration in the `confo/database` namespace

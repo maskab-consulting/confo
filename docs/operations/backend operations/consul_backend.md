@@ -18,24 +18,22 @@
 
 To list all backends loaded 
 ```python
+# Get Backends
 config.get_backends()
-#RESULTS:
-
-{'all_backends': ['example_backend'], 'active_backend': None}
-
+# Results:
+    {'all_backends': ['ConsulBackend'], 'active_backend': None}
 ```
 This return a dictionary with two keys: `all_backends` holds  list of all backends registered in this application; and `active_backend` holds the 
 name of the currently active backend.Note that activate_backend is None meaning the manager cannot access any configuration.If any of the configuration 
 level methods are invoked a `BackendsActivationException` error is raised.Now to make sure a backend is active,
 
 ```python
-#activate the example_backend
-config.activate_backend("example_backend")
-# List backends again to see if we have an active backend
-print(config.get_backends())
-#RESULTS
-{'all_backends': ['example_backend'], 'active_backend': 'example_backend'}
+# Activate ConsulBackend
+config.activate_backend("ConsulBackend")
 
+# List Backends To See Active Backend
+config.get_backends()
+    {'all_backends': ['ConsulBackend'], 'active_backend': 'ConsulBackend'}
 ```
 
 Note that the `activate_backend` field has the backend we activated with `Confo.activate_backend`.

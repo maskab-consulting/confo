@@ -19,25 +19,27 @@
 As mentioned above namespaces create a logical partition between groups of configuration, this becomes more 
 useful when dealing with distributed configurations, where multiple microservices are accessing and sharing configuration and data through Confo.
 
+Now in this backend that you activated, you create a new namespace.
 ```python
-#The method below is the namespace level analog to get_backends()
-print(config.get_namespaces())
-#RESULTS:
-{'all_namespaces': ['sales', 'analytics'], 'current_namespace': '*'}
-
+# Create Namespace "database"
+config.create_namespace("database")
 ```
 
-Please note we need to choose a namespace to use before we can access any configuration. If no namespace is chosen 
-a `NamespaceNotLoadedException` error will be raised.
+List all created namespaces
+```python
+# List Namespaces
+config.get_namespaces()
+# Results:
+    {'all_namespaces': ['confo/database']}
+```
 
-```python 
+To save configurations or perform other operations related to configurations, you will have to activate the namespace you want to use.
+```python
+# Use Namespace "database"
+config.use_namespace("database")
 
-#choose namespace 
-config.use_namespace("sales")
-#check if a namespace is chosen
-print(config.get_namespaces())
-
-#RESULTS:
-{'all_namespaces': ['sales', 'analytics'], 'current_namespace': 'sales'}
+# List Namespaces To See Active/Current Namespace
+config.get_namespaces()
+    {'all_namespaces': ['confo/database'], 'current_namespace': 'confo/database'}
 
 ```
