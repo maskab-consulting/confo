@@ -16,7 +16,7 @@
 ## Etcd Backend
 #### Backend Operations 
 
-To list all backends loaded 
+To get all backends loaded 
 ```python
 # Gets all backends
 

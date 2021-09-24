@@ -16,7 +16,7 @@
 ## Consul Backend
 #### Backend Operations 
 
-To list all backends loaded 
+To get all backends loaded 
 ```python
 # Get Backends
 config.get_backends()
