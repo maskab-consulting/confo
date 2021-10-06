@@ -37,7 +37,7 @@ pip install confo
 
 ```
 Confo uses a singleton object as the main interface into all your configurations; meaning it can safely be used in multiple 
-parts of an application. To start lets import Confo then create the Confo configuration manager object. Then
+parts of an application. To start lets import Confo then create the Confo configuration manager object. 
 
 ```python
 from confo.Confo import Confo
