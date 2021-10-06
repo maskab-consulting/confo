@@ -33,7 +33,7 @@ config = Confo()
 
 # Instantiate a FILE_BACKEND backend 
 cred = {"config_path":"Configurations/"}
-config.load_backend(credentials=cred,name="name",backend_type=BE.FILE_BACKEND)
+config.load_backend(credentials=cred,name="filesystem_backend",backend_type=BE.FILE_BACKEND)
 
 ```
 For  `BE.FILE_BACKEND` the credentials dictionary has the following properties:
