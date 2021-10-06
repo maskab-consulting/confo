@@ -17,10 +17,10 @@
 Confo is a flexible multi backend configuration manager for python. Built to provide a unified configuration management
 interface in different environments.Confo supports both local configuration with json files and distributed configurations,
 best suited for micro-service and distributed systems development. Confo defines 4 core objects:
-- Backend : A backend object represents a storage system where the configurations are loaded; e.g `BE.FILE_BACKEND` uses a filesystem as a storage mechanism.
-- Namespace : A namespace represents a virtual grouping of configurations, this can be used to map configurations by department,SaaS tenant, application etc.
-- Configuration : This is a named object that represents the configurations of a specific system e.g `database`,`task_manager`
-- Field : This represents the individual fields and their respective values in each configuration e.g in the `database` configuration 
+- **Backend** : A backend object represents a storage system where the configurations are loaded; e.g `BE.FILE_BACKEND` uses a filesystem as a storage mechanism.
+- **Namespace** : A namespace represents a virtual grouping of configurations, this can be used to map configurations by department,SaaS tenant, application etc.
+- **Configuration** : This is a named object that represents the configurations of a specific system e.g `database`,`task_manager`
+- **Field** : This represents the individual fields and their respective values in each configuration e.g in the `database` configuration 
           there are `host`,`port`,`password` and `username` fields.
 
 
