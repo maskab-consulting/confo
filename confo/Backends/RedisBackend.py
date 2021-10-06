@@ -162,10 +162,7 @@ class RedisBackend(AbstractBackend):
         Returns:
             dict: All dictionaries related to the current namespace
         """
-        if self.get_current_namespace() in self.namespaces["all_namespaces"]:
-            return self.configurations[self.get_current_namespace()]
-        else:
-            raise NamespaceNotLoadedException("Please select a namespace")
+        return super().get_all()
 
     def get(self, name, field=None):
         """
@@ -178,16 +175,7 @@ class RedisBackend(AbstractBackend):
         Returns:
             [dict | str]: returns the speciefied value of the name | field
         """
-        if field is not None:
-            try:
-                return self.configurations[self.get_current_namespace()][name][field]
-            except:
-                print("configuration {} or field {} are not set".format(name, field))
-        else:
-            try:
-                return self.configurations[self.get_current_namespace()][name]
-            except:
-                print("configuration {} is not set".format(name))
+        super().get(name=name, field=field)
 
     def set(self, config, field, value):
         """
@@ -198,17 +186,7 @@ class RedisBackend(AbstractBackend):
             field ([str | dict | list]): Name of the field | the entire configuration
             value ([str]): Value that is being set
         """
-        if type(field) == str:
-            try:
-                self.configurations[self.get_current_namespace()][config][field] = value
-            except:
-                self.configurations[self.get_current_namespace()][config] = {}
-                self.configurations[self.get_current_namespace()][config][field] = value
-        elif (type(field) == dict or type(field) == list) and value == None:
-            try:
-                self.configurations[self.get_current_namespace()][config] = field # {kjf: jkfd}
-            except:
-                print("hello world")
+        super().set(config=config, field=field, value=value)
 
     def get_count(self) -> int:
         """
@@ -217,7 +195,7 @@ class RedisBackend(AbstractBackend):
         Returns:
             int: count of configurations
         """
-        return len(self.get_all())
+        return super().get_count()
 
     def load_namespaces(self):
 
