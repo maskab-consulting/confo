@@ -14,6 +14,13 @@
 </p>
 
 ## Etcd Backend
+The Etcd backend  uses <a href="https://etcd.io/" > Etcd</a> as a storage mechanism.
+Etcd is a strongly consistent, distributed key-value store that provides a reliable way to store data that needs to be
+accessed by a distributed system or cluster of machines. It gracefully handles leader elections
+during network partitions and can tolerate machine failure, even in the leader node. `Confo` uses etcd as one of its backends allowing developers
+to build modern applications in the distributed context with ease, Confo abstracts away the details of Etcd's API in favour for a robust consistent API.
+
+
 The etcd backend saves the configurations to etcd. Imagine you have a sales database with credentials you want to expose to your application, and you want to use a sales forecasting model which is exposed via REST api. `Confo` uses namespaces to separate logical groups of configurations. For example everything concerned with systems from the `sales` department can be stored in the `sales` namespace and every configuration concerned with systems from the `analytics` team can be store in a namespace called `analytics`.
 An example of how configurations can be set and retrieved is shown below.
 
