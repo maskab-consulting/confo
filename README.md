@@ -24,7 +24,7 @@ best suited for micro-service and distributed systems development. Confo defines
           there are `host`,`port`,`password` and `username` fields.
 
 
-Now to summarize  Confo is a **multi backend**, meaning it manages configurations from multiple storage backends,and each Confo instance can manage **multiple backend instances**,
+Now to summarize  Confo is a **multi backend** configuration management system, meaning it manages configurations from multiple storage backends,and each Confo instance can manage **multiple backend instances**,
 which means you can have `BE.FILE_BACKEND 1` which reads from `directory1` and `BE.FILE_BACKEND 2` which reads from `directory 2`, or `BE.ZOOKEEPER_BACKEND 1` which 
 is connected to `first.zookeeper.server` and `BE.ZOOKEEPER_BACKEND 2` which is connected to `second.zookeeper.server`. This allows an application to pull configuration data from 
 multiple sources with a consistent and intuitive python API.
