@@ -94,7 +94,6 @@ You can use the  `BE.FILE_BACKEND` to store the credentials for zookeeper. Then 
 
 ```
 
-Now lets build a python app that sends an email verification link to newly registered users.We decoupled configuration from actual code by using confo:
 
 ```python
 from confo.Confo import Confo
