@@ -20,29 +20,58 @@ accessed by a distributed system or cluster of machines. It gracefully handles l
 during network partitions and can tolerate machine failure, even in the leader node. `Confo` uses etcd as one of its backends allowing developers
 to build modern applications in the distributed context with ease, Confo abstracts away the details of Etcd's API in favour for a robust consistent API.
 
+Every instance of `BE.ETCD_BACKEND` has these 4 components:
 
-The etcd backend saves the configurations to etcd. Imagine you have a sales database with credentials you want to expose to your application, and you want to use a sales forecasting model which is exposed via REST api. `Confo` uses namespaces to separate logical groups of configurations. For example everything concerned with systems from the `sales` department can be stored in the `sales` namespace and every configuration concerned with systems from the `analytics` team can be store in a namespace called `analytics`.
-An example of how configurations can be set and retrieved is shown below.
+- **Backend** :  A `etcd` server connection. When a `BE.ETCD_BACKEND` instance is created a `confo` key  is created automatically
+   which holds this value ```json {"namespaces":[]}```, so every Confo managed etcd cluster must have this `confo` KV pair.
+- **Namespace**: In the `etcd` backend all namespaces are listed in the `confo` key; if we have a namespace called `HR_dept` it is stored in
+ `confo` -> ```json {"namespaces":["HR_dept"]}```, then a new key called `HR_dept` which holds this value ```json {"configurations":[]}```. 
+ All keys that are listed in the `confo` key as namespaces they will be used to query the location of `configurations`
+- **Configuration**: Every namespace key lists all its configurations. If you have a configuration called `database` in the `HR_dept` namespace ,
+ it is registered as:  `HR_dept` -> ```json {"configurations":["database"]}```,then a key called `HR_dept-database` is generated and holds a json representation 
+ of the database configurations. 
+- **Field**: A field is simply a key/value pair stored in the json object, e.g `host:10.222.194.106` , `port: 3306`.
+ A field can have a value which is an object. e.g to store a list of `admin email addresses` one can use 
+ `admins: ["kabelo.masemola@sambe.co.za","bhavesh.lala@sambe.co.za"]`.
 
-In order to use etcd, you must first import `confo` and create a singleton configuration object. You then define etcd credentials to connect to the etcd client.
+```
+ 
+ KEYS   =       confo                    ->    HR_dept                      -> HR_dept-database ->              e.g host 
+ 
+ VALUES =     {"namespaces":["HR_dept"]} ->  {"configurations":["database"]}  -> {                           -> 127.0.0.1
+                                                                                      "driver": "pgsql",
+                                                                                      "host": "127.0.0.1",
+                                                                                      "database": "portal",
+                                                                                      "user": "gemuser",
+                                                                                      "password": "gempass",
+                                                                                      "prefix": ""
+                                                                                    }
+
+```
+
+
+### The credentials dictionary
 
 ```python
 from confo.Confo import Confo
-from confo import Backends as BE
-from confo.Backends.EtcdBackend import EtcdBackend
-
-# Create the singleton configuration manager object
+import confo.Backends as BE
+#create the singleton configuration manager object 
 config = Confo()
-```
-
-Create a new `Confo` object `config` and load the credentials of your ETCD Server. Provide a name for your backend.
-
-```
 # Instantiate a ETCD_BACKEND backend 
 cred = {"host":"127.0.0.1",  
-        "port":2379}
-config.load_backend(credentials=cred,name="ETCD_backend",backend_type=BE.ETCD_BACKEND)
+        "port":"2181",   # 
+        #If you want to register pre- existing namespaces during backend loading 
+        "namespaces":["HR_dept","sales"]
+        }
+config.load_backend(credentials=cred,name="ecommerce_configs",backend_type=BE.ETCD_BACKEND )
 ```
 
+For the `BE.ETCD_BACKEND` the credentials dictionary has the following properties:
+- **host**: The address of the etcd server 
+- **port**: The port of the etcd server
+- **namespace**: This property is optional and allows the registration of pre-existing namespaces.
 
-The `Confo.load_backend(credentials,name,backend_type)` method is used to create a backend management object.The credentials differ by backend type. The etcd backend accepts a dictionary of credentials `cred` to connect.
+**Note:**
+You can use the  `BE.FILE_BACKEND` to store the credentials for etcd. Then use Confo itself to create the etcd backend.
+
+
