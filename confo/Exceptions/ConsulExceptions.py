@@ -16,3 +16,7 @@ class BadRequest(Exception):
 
 class ClientError(Exception):
     pass
+
+
+class UnknownFormatInMainNameSpace(Exception):
+    pass
