@@ -5,3 +5,9 @@ class RedisHostNotFoundException(Exception):
 
 class RedisPortNotFoundException(Exception):
     pass
+
+class UnknownFormatInMainNameSpace(Exception):
+    pass
+
+class ConfigurationNotSetException(Exception):
+    pass
