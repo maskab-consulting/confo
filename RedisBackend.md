@@ -63,7 +63,7 @@ Preview all created namespaces
 config.get_namespaces()
 
 #RESULTS
-{'all_namespaces': ['/confo/database']}
+{'all_namespaces': ['database'], 'current_namespace': None}
 ```
 To save configurations or perform other operations related to configurations, you will have to activate the namespace you want to use.
 ```python
@@ -74,7 +74,7 @@ config.use_namespace("database")
 config.get_namespaces()
 
 #RESULTS
-{'all_namespaces': ['/confo/database'], 'current_namespace': '/confo/database'}
+{'all_namespaces': ['database'], 'current_namespace': 'database'}
 ```
 
 #### Configuration level operations
@@ -171,7 +171,7 @@ config.persist()
 config.reload()
 
 ```
-To show how the `reload()` method really works, we'll have to create a new `Confo` instance then in this new instance only use the `reload` method to populate it with 
+<!-- To show how the `reload()` method really works, we'll have to create a new `Confo` instance then in this new instance only use the `reload` method to populate it with 
 configurations saved in Redis Cache
 ```python
 """
@@ -249,5 +249,5 @@ config2.get("mysqli", "host")
 
 #RESULTS
 'localhost'
-```
+``` -->
 
