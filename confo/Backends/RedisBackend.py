@@ -35,12 +35,10 @@ class RedisBackend(AbstractBackend):
         '''
             Namespaces
         '''
-        self.main_namespace: str = "/confo/"
-        self.current_namespace = None
-        self.namespaces: dict = {
-            "all_namespaces" : []
-        }
-
+        self.main_namespace: str = "confo"
+        self.namespace_name = None
+        self.namespaces: list = []
+        self.reg_namespaces: list = []
         '''
             Configurations
         '''
@@ -63,12 +61,11 @@ class RedisBackend(AbstractBackend):
             '''
             self.rs_client = Redis(host=self.redis_host, port=self.redis_port, db=self.redis_db)
         else:
-            pass
+            self.rs_client = Redis(host=self.redis_host, port=self.redis_port, db=self.redis_db, password=self.redis_password)
 
-        '''
-            Get all namespaces in Redis cache
-        '''
-        self.namespaces["all_namespaces"] = self.get_children()
+        self.ensure_main_namespace()
+        self.namespaces = self.load_namespaces()
+        self.register_namespaces(self.reg_namespaces)
 
     def create_namespace(self, namespace) -> None:
         """
@@ -77,12 +74,31 @@ class RedisBackend(AbstractBackend):
         Args:
             namespace ([str]): The name of the namespace
         """
+        self.register_namespaces(namespaces=[namespace]) 
 
-        root_namespace = self.main_namespace + namespace                            # create the namespace with combination of the main namespace e.g /confo/{namespace} 
+    def key_exists(self, key_name) -> bool:
+        if self.rs_client.exists(key_name) == 1:
+            return True
+        return False
 
-        self.rs_client.set(root_namespace, "null")                                  # Since redis takes Key-Value, the namespace value is set to Null
-        self.configurations[root_namespace] = {}                                    # Create an entry of the namespace in configurations
-        self.namespaces["all_namespaces"] = self.get_children()                     # Get updated list of namespaces after creating a new space 
+    def ensure_main_namespace(self):
+
+        if not self.key_exists(self.main_namespace):
+            self.rs_client.set(self.main_namespace, json.dumps({"namespaces": []}))
+
+    
+    def register_namespaces(self, namespaces: list) -> None:
+
+        self.namespaces = self.load_namespaces()
+
+        for namespace in namespaces:
+            if not self.key_exists(namespace):
+                self.rs_client.set(namespace, json.dumps({"configurations": []}))
+
+            self.namespaces.append(namespace)
+
+        self.namespaces = list(set(self.namespaces))
+        self.rs_client.set(self.main_namespace, json.dumps({"namespaces": self.namespaces}))
 
     def persist(self, namespace=False, config=False) -> None:
         """
@@ -119,7 +135,7 @@ class RedisBackend(AbstractBackend):
         Returns:
             dict: The namespaces in the instance
         """
-        return self.namespaces
+        return super().get_namespaces()
 
     def use_namespace(self, system_name: str):
         """
@@ -127,30 +143,9 @@ class RedisBackend(AbstractBackend):
         This methods activates the namespace you want to use
 
         Args:
-            system_name (str): [description]
+            system_name (str): Namespace you want to use
         """
-
-        if system_name.startswith(self.main_namespace):                                 # checks if the system_name starts with '/confo/'
-            '''
-                If the system_name starts with '/confo/' then the namespace is the system_name
-            '''
-            namespace = system_name
-        else:
-            '''
-                If not then create the namespace as the combination of main namespace and the system_name e.g /confo/{system_name}
-            '''
-            namespace = self.main_namespace + system_name
-        
-        if namespace in self.get_namespaces()["all_namespaces"]:                        # Checks if the namespace already exists in the list of all namespaces
-            '''
-                Since the specified namespace to use exists, activate it by setting it as the current in-use namespace
-            '''
-            self.namespaces["current_namespace"] = namespace
-        else:
-            '''
-                Since it doesn't exists, it cannot be activated
-            '''
-            print("Namespace: {} does not exist".format(system_name))
+        super().use_namespace(system_name)
 
     def get_all(self) -> dict:
         """
@@ -175,7 +170,7 @@ class RedisBackend(AbstractBackend):
         Returns:
             [dict | str]: returns the speciefied value of the name | field
         """
-        super().get(name=name, field=field)
+        return super().get(name=name, field=field)
 
     def set(self, config, field, value):
         """
@@ -199,42 +194,37 @@ class RedisBackend(AbstractBackend):
 
     def load_namespaces(self):
 
-        if len(self.get_children()) > 0 and len(self.configurations.keys()) != 0:
-            for namespace in self.get_children():
-                self.configurations[namespace] = {}
+        try:
+            nm_dict = json.loads(self.rs_client.get(self.main_namespace).decode('utf-8'))
+            namespaces = nm_dict["namespaces"]
+
+        except:
+            raise UnknownFormatInMainNameSpace("The confo key has data with Unknown Format")
+
+        return namespaces
+            
 
     def reload(self):
         """
         Extracts configurations and namespaces already saved from Redis cache into this instance
         """
-
-        if self.get_current_namespace() not in self.get_namespaces()["all_namespaces"]:
-            raise NamespaceNotLoadedException("Namespace : {} does not exist".format(self.get_current_namespace()))
-
-        if len(self.configurations) == 0:
-            self.configurations[self.get_current_namespace()] = {}
+        self.configurations[self.get_current_namespace()] = {}
 
         '''
             Get keys stored in redis cache, but im looking for keys that are in a specific format,
             keys that have the namespace in them e.g /confo/database/* -> /confo/database/mysqli,
             then store them in a list
         '''
-        config_paths = [config_namespace.decode("utf-8") for config_namespace in self.rs_client.keys("*{}/*".format(self.get_current_namespace()))]      # Extracts configuration namespaces
+        config_paths = json.loads(self.rs_client.get(self.get_current_namespace()).decode('utf-8'))["configurations"]      # Extracts configuration namespaces
         
         '''
             Loop through the keys to use them to get the data stored in redis cache
         '''
         for c_path in config_paths:
-            data = (self.rs_client.get(c_path)).decode("utf-8")                         # Fetch data in redis          
+            config_name = "{}-{}".format(self.get_current_namespace(), c_path)
+            data = (self.rs_client.get(config_name)).decode("utf-8")                         # Fetch data in redis          
             if data == '':
                 data = "{}"
-
-            '''
-                Since the keys are in this format /confo/database/mysqli ... and mysqli is our config name,
-                Split the string to create an array ["", "confo", "database", "mysqli"] then return the last item - thats the config name
-            '''    
-            config_name = str(c_path).split("/").pop()
-
             try:
                 self.configurations[self.get_current_namespace()][config_name] = json.loads(data)
             except ValueError as e:
@@ -267,23 +257,6 @@ class RedisBackend(AbstractBackend):
         else:
             raise RedisPortNotFoundException("Please set 'redis_post' in your credentials")
 
-    def get_children(self) -> list:
-        """
-        Returns all namespaces saved in Redis cache
-
-        Returns:
-            list: list of namespaces
-        """
-        children = []
-        
-        '''
-            Loops all keys of the format '/confo/' that are saved in Redis, then push them in a list and returns them as namespaces
-        '''
-        for namespace in self.rs_client.keys("*{}*".format(self.main_namespace)):
-            if len(str(namespace.decode("utf-8")).split("/")) == 3:
-                children.append(namespace.decode("utf-8"))
-        return children
-
     def get_configs(self) -> dict:
         """
         Will return all configurations this instance has
@@ -300,16 +273,17 @@ class RedisBackend(AbstractBackend):
         Returns:
             str: the string that is the current namespace
         """
-        return self.namespaces["current_namespace"]
+        return self.namespace_name
 
     def persist_everything(self) -> None:
         """
         Loop through all namespaces and persist each every namespace that is in the list of namespaces
         """
-        for namespace in self.namespaces["all_namespaces"]:
+        for namespace in self.get_namespaces()["all_namespaces"]:
             '''
                 Persist per namespace
             '''
+            print(namespace)
             self.persist_namespace(namespace)
     
     def persist_namespace(self, namespace) -> None:
@@ -322,43 +296,22 @@ class RedisBackend(AbstractBackend):
         Raises:
             NamespaceNotLoadedException: Raised when the namespace is not found in the list namespaces
         """
+        recover_namespace = self.namespace_name
         if namespace not in self.configurations.keys():
-            raise NamespaceNotLoadedException(
-                "Namespace {} is not loaded, Load namespace with obj.use_namespace({})".format(namespace, namespace)
-            )
-        
-        if (self.rs_client.exists(namespace) != 1) and (namespace in self.namespaces["all_namespaces"]):
-            '''
-                Check if the namespace exists in the list of namespaces but not in the Redis cache, create it in the redis cache
-            '''
-            self.rs_client.set(namespace, "null")
-
-        elif (self.rs_client.exists(namespace) != 1) and (namespace not in self.namespaces["all_namespaces"]):
-
-            '''
-                Else if does not exists in both the Redis cache and the list of namespaces,
-                we just create that namespace... The above Raised Exception will excute, so the code wont reach this part
-            '''
+             raise NamespaceNotLoadedException(
+                "Namespace " + namespace + " not loaded. Load namespace with obj.use_namespace(" + namespace + ")")
+        self.recover_config: dict = self.configurations[namespace]
+        if self.key_exists(namespace):
+            pass
+        else:
             self.create_namespace(namespace)
 
-        
-        self.use_namespace(namespace)                                                   # Activate the namespace for usage
-        
-        '''
-            Save all configurations of the namespace in it's own dict
-        '''
-        self.namespace_configs = self.configurations[namespace]
+        self.use_namespace(namespace)
+        for configuration_key in self.recover_config.keys():
+            self.persist_configuration(namespace,configuration_key)
+        self.use_namespace(recover_namespace)
 
-        '''
-            Now Loop through all configurations of the namespace to persist them
-        '''
-        for nsp_config_name in self.namespace_configs.keys():
-            '''
-                Persist per configuration
-            '''
-            self.persist_configuration(namespace, nsp_config_name)
-
-    def persist_configuration(self, namespace, config_name) -> None:
+    def persist_configuration(self, namespace, configuration_key) -> None:
         """
         Will extract configurations of the specified namespace and save them in Redis cache
 
@@ -366,10 +319,11 @@ class RedisBackend(AbstractBackend):
             namespace ([str]):  Name of the namespace
             config_name ([str]): Name of the configuration
         """
-        self.namespace_configs = self.configurations[namespace]
-        dir = "{}/{}".format(namespace, config_name)                                    # /confo/db/mysqli
-        data = self.namespace_configs[config_name]                                      # extract dict of configs
-        self.rs_client.set(dir, str.encode(json.dumps(data)))                           # save them in Redis
-
+        # self.recover_config = self.configurations[namespace]
+        print(self.recover_config)
+        path = namespace + "-" + configuration_key
+        data = self.recover_config[configuration_key]
+        print(data)
+        self.rs_client.set(path,json.dumps(data))
         # print("nsp : {}, data : {}".format(dir, self.rs_client.get(dir)))
         
