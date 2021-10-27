@@ -22,7 +22,8 @@ Every instance of `BE.REDIS_BACKEND` has these 4 components:
  - **Field** : A field is simply a key/value pair stored in the json object, e.g `host: localhost` , `port: 6379`. A field can have a value which is an object. e.g to store a list of `admin email addresses` one can use `admins`: `["tshepang.maila@sambeconsulting.com","kabelo.masemola@sambe.co.za"]`.
 <br>
 ### The credentials dictionary
-```python
+ 
+```
 # Import necessary modules
 from confo.Confo import Confo
 import confo.Backends as BE
