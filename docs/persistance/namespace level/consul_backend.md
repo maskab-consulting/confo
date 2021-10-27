@@ -17,7 +17,10 @@
 ##### Namespace Level
 
 ```python
-config.persist(namespace="confo/database")
+
+# Persists Configuration In Namespace
+config2.persist(namespace="confo/database", config="sql")
+
 ```
 
 The above code will persist every configuration in the `confo/database` namespace

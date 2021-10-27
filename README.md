@@ -78,7 +78,7 @@ config.load_backend(credentials=cred,name=name,backend_type=type)
 
 2.7 <a href="docs/backends/elasticsearch_backend.md">Elastic Search Backend</a><br><br>
 
-3. Operations
+3.Operations
 
 3.1 <a href="docs/operations/backend operations">Backend Operations</a>
 
@@ -86,7 +86,7 @@ config.load_backend(credentials=cred,name=name,backend_type=type)
 
 3.3 <a href="docs/operations/configuration level operations">Configuration Level Operations</a><br><br>
 
-4. Persistance
+4.Persistance
 
 4.1 <a href="docs/persistance/backend level">Backend Level</a>
 

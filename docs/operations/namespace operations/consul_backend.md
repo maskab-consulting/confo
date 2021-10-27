@@ -23,6 +23,9 @@ Now in this backend that you activated, you create a new namespace.
 ```python
 # Create Namespace "database"
 config.create_namespace("database")
+config.create_namespace("GraphQL")
+config.create_namespace("KivyMD")
+
 ```
 
 List all created namespaces
@@ -30,16 +33,19 @@ List all created namespaces
 # List Namespaces
 config.get_namespaces()
 # Results:
-    {'all_namespaces': ['confo/database']}
+     {'all_namespaces': ['confo/GraphQL', 'confo/KivyMD', 'confo/database']}
+
 ```
 
 To save configurations or perform other operations related to configurations, you will have to activate the namespace you want to use.
 ```python
-# Use Namespace "database"
+# Use Namespace "GraphQL"
 config.use_namespace("database")
 
 # List Namespaces To See Active/Current Namespace
 config.get_namespaces()
-    {'all_namespaces': ['confo/database'], 'current_namespace': 'confo/database'}
+# Results:
+    {'all_namespaces': ['confo/GraphQL', 'confo/KivyMD', 'confo/database'],
+     'current_namespace': 'confo/database'}
 
 ```

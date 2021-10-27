@@ -66,6 +66,7 @@ config2.get_backends()
 Create and get available namespaces
 
 ```python
+
 # Create New Namespace
 config2.create_namespace("database")
 
@@ -73,7 +74,9 @@ config2.create_namespace("database")
 config.get_namespaces()
 
 # Result
-{'all_namespaces': ['confo/database']}
+
+    {'all_namespaces': ['confo/GraphQL', 'confo/KivyMD', 'confo/database']}
+
 ```
 
 After checking all the available namespaces in the instance, You can just choose to use that namespace
@@ -99,11 +102,15 @@ Now that configurations and their namespaces have been pulled from Consul Cache 
 config.get_all()
 
 # Result
-{'postgres': {'host': 'localhost', 'db_name': 'sambe_db', 'usr': 'root2'},
- 'sql': {'host': 'localhost',
-  'db_name': 'sambe_db',
-  'usr': 'root',
-  'user': 'rad',
-  'permissions': 'R,W,D,U'}}
+    {'graphQL': {'host': 'localhost', 'db_name': 'mongo_db', 'usr': 'SambeCC'},
+     'postgres': {'host': 'localhost', 'db_name': 'sambe_db2', 'usr': 'root2'},
+     'sql': {'host': 'localhost',
+      'db_name': 'sambe_db',
+      'usr': 'root',
+      'user': 'rad',
+      'permissions': 'R,W,D,U'}}
+
 ```
+
+
 

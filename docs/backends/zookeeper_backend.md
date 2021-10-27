@@ -19,7 +19,7 @@ providing distributed synchronization, and providing group services. Zookeeper i
 for `Confo` essentially abstracting away the complex zookeeper API. The advantage of using Confo in this environment is that you get the same API 
 when testing locally and when deploying on production
 
-##### Zookeeper quick overview
+##### Zookeeper Quick Overview
 ZooKeeper allows distributed processes to coordinate with each other through a shared hierarchical 
 name space of data registers (we call these registers znodes), much like a file system.
 Unlike normal file systems ZooKeeper provides its clients with high throughput, low latency,

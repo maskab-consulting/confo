@@ -39,6 +39,17 @@ connect_name = "postgres"
 
 # Creating New Configuration & Store Credentials
 config.set(connect_name,postgres, None)
+
+graphQL = {
+    "host": "localhost",
+    "db_name": "mongo_db",
+    "usr": "SambeCC"
+}
+connect_name = "graphQL"
+
+# Creating New Configuration & Store Credentials
+config.set(connect_name,graphQL, None)
+
 ```
 
 Retrieving saved configurations in a particular namespace is as just a calling `get_all()` method on a `Confo` instance. But you can get specific with the data you want by specifying the name of the configuration you want with just `get("config_name")` or by being super specific by supplying both the config name & field key, `get("config_name", "key")` on a `Confo` instance
@@ -52,12 +63,12 @@ config.get("sql")
 # Get Postgrss Configurations
 config.get("postgres")
 # Result:
-    {'host': 'localhost', 'db_name': 'sambe_db', 'usr': 'root2'}
+    {'host': 'localhost', 'db_name': 'sambe_db2', 'usr': 'root2'}
 
 # Get Postgres Database Name
 config.get("postgres","db_name")
 # Result:
-    'sambe_db'
+    'sambe_db2'
     
 # Get SQL Host
 config.get("sql","host")
@@ -67,7 +78,9 @@ config.get("sql","host")
 # Get All Configurations In The Current Namespace
 config.get_all()
 # Result
-    {'sql': {'host': 'localhost', 'db_name': 'sambe_db', 'usr': 'root'},
-     'postgres': {'host': 'localhost', 'db_name': 'sambe_db', 'usr': 'root2'}}
+     {'sql': {'host': 'localhost', 'db_name': 'sambe_db', 'usr': 'root'},
+     'postgres': {'host': 'localhost', 'db_name': 'sambe_db2', 'usr': 'root2'},
+     'graphQL': {'host': 'localhost', 'db_name': 'mongo_db', 'usr': 'SambeCC'}} 
+
 ```
 
