@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # *******************************************************************************#
 # Title:                    ETCD Backend                                         #
 # Description:              This backend is used to handle distributed           #
@@ -10,6 +11,19 @@
 
 # Import modules
 from typing import Type
+=======
+# ****************************************************************************#
+# Title:                    EtcdBackend                                       #
+# Description:              This backend is used to handle  etcd              #
+#                           configurations                                    #
+# Author:                   Neo Thamela <neo.thamela@sambeconsulting.com>     #
+# Author:                   Karabo Maleka <karabo.maleka@sambeconsulting.com> #
+# Original Date:            06 March 2021                                     #
+# Update Date:              14 March 2021                                     #
+# Version:                  3.2.26                                            #
+# ****************************************************************************#
+
+>>>>>>> ff285f8d20c5c9a5d535900e8797e0a5a4989384
 
 from .AbstractBackend import AbstractBackend
 import os
