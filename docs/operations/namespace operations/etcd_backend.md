@@ -31,6 +31,7 @@ config.use_namespace("database")
 Returns all created namespaces
 
 ```python
+
 # Returns all namespaces and shows the active namespace
 print(config.get_namespaces())
 
@@ -42,7 +43,7 @@ print(config.get_namespaces())
 Please note we need to choose a namespace to use before we can access any configuration. If no namespace is chosen 
 a `NamespaceNotLoadedException` error will be raised.
 
-```python 
+```python
 # Returns all the namespaces
 print(config.get_count())
 

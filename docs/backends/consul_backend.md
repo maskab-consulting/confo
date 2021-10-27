@@ -26,6 +26,7 @@ Every instance of `BE.CONSUL_BACKEND` has these 4 components:
  - **Field** : A field is simply a key/value pair stored in the json object, e.g `host:127.0.0.1` , `port: 8500`. A field can have a value which is an object. e.g to store a list of `admin email addresses` one can use `admins`: `["mahlatsi.mokwele@sambeconsulting.com","kabelo.masemola@sambe.co.za"]`.
 <br>
 ### The credentials dictionary
+ 
 ```python
 from confo.Confo import Confo
 from confo import Backends as BE

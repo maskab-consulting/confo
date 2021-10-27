@@ -17,14 +17,14 @@ As mentioned above namespaces create a logical partition between groups of confi
 useful when dealing with distributed configurations, where multiple microservices are accessing and sharing configuration and data through Confo.
 
 Now in this backend that you activated, you create a new namespace.
-```python
+```
 # Create namespace
 config.create_namespace("database")
 
 ```
 
 Preview all created namespaces
-```python
+```
 
 # Preview all the namespaces that are in the instance
 config.get_namespaces()
@@ -35,7 +35,7 @@ config.get_namespaces()
 ```
 To save configurations or perform other operations related to configurations, you will have to activate the namespace you want to use.
 
-```python
+```
 # Choose to use the namespace that you created, this namespace will lead to your configurations files
 config.use_namespace("database")
 
