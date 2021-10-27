@@ -35,3 +35,4 @@ typing-extensions==3.7.4.3
 webencodings==0.5.1
 wget==3.2
 zipp==3.4.1
+etcd3==0.12.0
