@@ -24,7 +24,7 @@ Every instance of `BE.REDIS_BACKEND` has these 4 components:
 
 ### The credentials dictionary
  
-```
+```python
 # Import necessary modules
 from confo.Confo import Confo
 import confo.Backends as BE

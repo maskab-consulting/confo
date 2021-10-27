@@ -24,7 +24,7 @@ Every instance of `BE.CONSUL_BACKEND` has these 4 components:
  - **Namespace**: In the consul backend all namespaces are listed in the `confo` key; if we have a namespace called `HR_dept` it is stored in `confo` -> `json {"namespaces":["HR_dept"]}`, then a new key called `HR_dept` which holds this value `json {"configurations":[]}`. All keys that are listed in the `confo` key as namespaces they will be used to query the location of `configurations`
  - **Configuration**: Every namespace key lists all its configurations. If you have a configuration called `database` in the `HR_dept` namespace , it is registered as: `HR_dept` -> `json {"configurations":["database"]}`,then a key called `HR_dept-database` is generated and holds a json representation of the database configurations.
  - **Field** : A field is simply a key/value pair stored in the json object, e.g `host:127.0.0.1` , `port: 8500`. A field can have a value which is an object. e.g to store a list of `admin email addresses` one can use `admins`: `["mahlatsi.mokwele@sambeconsulting.com","kabelo.masemola@sambe.co.za"]`.
-<br>
+
 ### The credentials dictionary
  
 ```python
